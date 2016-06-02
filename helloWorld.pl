@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-print "HelloWorld\n";
+print "HelloWorld GitHub\n";
 # Try readFile
 
 print "Now I will read a file\n";
