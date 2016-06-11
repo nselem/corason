@@ -1,27 +1,47 @@
 # DOCKER-VERSION 0.3.4
 FROM perl:5.20
-## Installing cpanm to get perl SvG module
+
+## Installing perl module
 RUN curl -L http://cpanmin.us | perl - App::cpanminus
 RUN cpanm SVG
 
-#__________________________________________________________
-# Installing blast
-## Esta opcion descarga blast cada vez y tarda mucho.
-#RUN mkdir /opt/blast && curl ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.30/ncbi-blast-2.2.30+-x64-linux.tar.gz | tar -zxC /opt/blast --strip-components=1
+###____________________________________________
+
 RUN if [ ! -d /opt ]; then mkdir /opt; fi
+###__________________________________________________________________________________________________________________________________
+# Installing blast
 
-# Esta opcion no corre porque no se como pasarle el instalador de blast que ya tengo en la carpeta, talvez con volume
-# RUN mv ncbi-blast-2.3.0+-x64-linux.tar.gz /opt && cd /opt | tar -zxvf ncbi-blast-2.3.0+-x64-linux.tar.gz
-## 
-# ENV PATH /opt/ncbi-blast-2.3.0+/bin:$PATH
+## Esta opcion descarga blast cada vez y tarda mucho.
+RUN mkdir /opt/blast && curl ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.2.30/ncbi-blast-2.2.30+-x64-linux.tar.gz | tar -zxC /opt/blast --strip-components=1
 
-#______________________
+######___________________________________________________________________________________________________________________________________
+# Instaling muscle
+ RUN wget -O /opt/muscle3.8.tar.gz http://www.drive5.com/muscle/downloads3.8.31/muscle3.8.31_i86linux64.tar.gz
+ RUN mkdir /opt/muscle && tar -C /opt/muscle -xzvf /opt/muscle3.8.tar.gz && ln -s /opt/muscle/muscle3.8.31_i86linux64 /opt/muscle/muscle  
+####___________________________________________________________________________________________________________________________________
 # Installing GBlocks
 RUN curl -SL http://molevol.cmima.csic.es/castresana/Gblocks/Gblocks_Linux64_0.91b.tar.Z | tar -xzC /opt && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
+####___________________________________________________________________________________________________________________________________
+## Instaling Quicktree
+RUN wget -O /opt/quicktree.tar.gz ftp://ftp.sanger.ac.uk/pub/resources/software/quicktree/quicktree.tar.gz 
+RUN mkdir /opt/quicktree && tar -C /opt/quicktree -zxvf /opt/quicktree.tar.gz && cd /opt/quicktree/quicktree_1.1 &&  make quicktree
+#___________________________________________________________________________________________________________________________________
 
+# Installing NewickTools
+RUN wget -O /opt/newick-utils-1.6.tar.gz http://cegg.unige.ch/pub/newick-utils-1.6-Linux-x86_64-disabled-extra.tar.gz 
+RUN mkdir /opt/nw && tar -C /opt/nw -xzvf /opt/newick-utils-1.6.tar.gz && cd /opt/nw/newick-utils-1.6 && cp src/nw_* /usr/local/bin
+#_________________________________________________________________________________________________
+
+ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_1.1/bin
+
+#### Vim
+RUN cd ~
+RUN git clone https://github.com/vim/vim.git
+RUN cd vim && ./configure && make VIMRUNTIMEDIR=/usr/share/vim/vim74 && make install
+
+# RUN apt-get install vim
 ## Moving to myapp directory
 COPY . /usr/src/myapp
 WORKDIR /usr/src/myapp
-
-
-CMD [ "perl", "./helloWorld.pl" ]
+CMD [ "perl", "./CORASON/*.pl" ]
+CMD [ "perl", "./testworld.pl" ]
