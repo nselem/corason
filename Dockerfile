@@ -32,8 +32,8 @@ RUN mkdir /opt/nw && tar -C /opt/nw -xzvf /opt/newick-utils-1.6.tar.gz && cd /op
 ## CORASON
 RUN git clone https://github.com/nselem/EvoDivMet
 RUN mkdir /opt/CORASON
-RUN mv CORASON/* /opt/CORASON
-RUN ["chmod", "+x","/opt/CORASON/*.pl" ] 
+#RUN mv CORASON/* /opt/CORASON
+#RUN ["chmod", "+x","/opt/CORASON/*.pl" ] 
 
 #_________________________________________________________________________________________________
  ######### PATHS ENVIRONMENT
@@ -50,5 +50,5 @@ RUN cd vim && ./configure && make VIMRUNTIMEDIR=/usr/share/vim/vim74 && make ins
 # RUN apt-get install vim
 ## Moving to myapp directory
 COPY . /usr/src/CORASON
-WORKDIR /usr/src/CORASON 
+#WORKDIR /usr/src/CORASON 
 CMD [ "perl", "./testworld.pl" ]
