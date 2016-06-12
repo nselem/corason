@@ -1,10 +1,10 @@
 #!/usr/bin/perl
+
+use SVG;
 use strict;
 use warnings;
 use Getopt::Long;
 use Cwd;
-##################################################################################
-    use SVG;
 ####################################################################
 # Need to improve: Resize window for more gene
 ## Check genes are on the same contig
