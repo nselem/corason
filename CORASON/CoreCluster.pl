@@ -178,6 +178,10 @@ if ($boolCore>1){
 			$report=$report. "I will draw with the single hits order\n";
 			$INPUTS=getDrawInputs($orderFile);
         		}
+		my $line =`perl -ne \'print if \$\. == 2\' PrincipalHits `;
+ 		my $len = map $_, $line =~ /(.)/gs;
+		$len--;
+		$report=$report."\nAminoacid array size = $len \n\n";
         	}
 #_____________________________________________________________________________________________
 
