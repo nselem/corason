@@ -196,7 +196,7 @@ print REPORTE $report;
 close REPORTE;
 
 print "Cleaning temporary files\n";
-#cleanFiles();
+cleanFiles();
 
 print "Done\n";
 print "Have a nice day\n\n";

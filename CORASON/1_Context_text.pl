@@ -134,7 +134,7 @@ my %CLUSTERcolor=BlastColor($PEG,$special_org,$cluster_radio,$num,$eClust,$DB,$g
 ########################################################################################################################
 
 print "Now I will produce the *.input file\n";
-print "Enter to continue\n";
+#print "Enter to continue\n";
 #my $pause= <STDIN>;
 
 for my $orgs (sort keys %{$AllHits{$query_name}}){
