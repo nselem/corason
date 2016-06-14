@@ -21,6 +21,7 @@ Docker Reproducibility.
 
 *This step may be before hello-world  
      `sudo usermod -aG docker your-user`
+Remember to replace your-user with your linux user (Ex `sudo usermod -aG docker nselem`)
 
 ###### Important step:  
 Log out from your ubuntu session (restart the machine)  and get back in into your user session before the next step
