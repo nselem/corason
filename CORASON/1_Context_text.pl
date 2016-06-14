@@ -95,7 +95,7 @@ BestHits($query_name,\%Hits,\%AllHits);
 				## BestHits  ##Read Blast file created by MakeBlast sub whit at least $eSeq as evalue cutoff
 				## Stores best hits on Hash Hits  BBBYYYY identity
 				#refHits->{$name}{$org}=[$percent,$peg];
-print "Checando hits\n";
+print "Looking for hits\n";
 #		foreach my $key (keys %Hits){ print "$key -> $Hits{$key}\n"; }
 		
 
