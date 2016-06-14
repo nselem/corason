@@ -16,7 +16,7 @@ Docker Reproducibility.
 ## Installation guide
 ### 0. Install docker engine
 (If you have docker engine skip this step)
-$ curl -fsSL /*https://get.docker.com//* | sh   
+`$ curl -fsSL https://get.docker.com/ | sh   `
 *if you don’t have curl search on this document curl installation
 
 quizas este paso va antes
