@@ -22,12 +22,14 @@ Docker Reproducibility.
 *This step may be before hello-world  
      `sudo usermod -aG docker your-user`
 
-###### Important step:   
-log out from your ubuntu session (restart the machine)  and get back in into your user session before the next step
+###### Important step:  
+Log out from your ubuntu session (restart the machine)  and get back in into your user session before the next step
 May be important to restart your computer, not just log out yor session, or maybe importatn to waite some minutes, not sure until more proof performed.
 
+Test your docker engine with:  
 `$ docker run hello-world`  
-Docker starting tutorial and also Windows/Mac installation available at [Docker] (https://docs.docker.com/linux/step_one/)   
+
+This are Linux minimal docker installation guide, for a detailed tutorial Linux/Windows/Mac installation Docker engine please consult [Docker getting Starting] (https://docs.docker.com/linux/step_one/).
 
 ### 1 Set your database  
 Create an empty directory that contains your RAST-genome data base, your Rast_Ids file and your query.
