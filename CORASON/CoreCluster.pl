@@ -115,10 +115,10 @@ print "Creando arbol de Hits del query, sin considerar los clusters\n";
 
         print "\Saving as Stockolm format\n";
 	system(" converter.pl RightNamesPrincipalHits.txt ");
-	#constructing a tree with quicktree with a 100 times bootstrap
+	print ("constructing a tree with quicktree with a 100 times bootstrap\n");
 	system "quicktree -i a -o t -b 100 RightNamesPrincipalHits.stockholm > PrincipalHits_TREE.tre";
 	system "mv PrincipalHits_TREE.tre $outname\_PrincipalHits.tre";
-
+        print ("Getting Newick labels\n");
 	system "nw_labels -I $outname\_PrincipalHits.tre>PrincipalHits.order";
 	my $INPUTS=""; ## Orgs sorted according to a tree (Will be used on the Context draw)
 	my $orderFile="PrincipalHits.order";
