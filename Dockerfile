@@ -39,7 +39,7 @@ RUN cd vim && ./configure && make VIMRUNTIMEDIR=/usr/share/vim/vim74 && make ins
 
 #_________________________________________________________________________________________________
 ## CORASON
-RUN cachebuster=b953b36 git clone https://github.com/nselem/EvoDivMet
+RUN git clone https://github.com/nselem/EvoDivMet
 RUN mkdir /opt/CORASON
 
  ######### PATHS ENVIRONMENT
