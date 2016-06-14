@@ -1,5 +1,5 @@
 # EvoDivMet
-Bioinformatic Tools for study Evolution of metabolic diversity
+Bioinformatic Tools for studying evolution of metabolic diversity
 
 ## CORASON
 ### CORe Analysis of Syntenic Orthologs for priorize Natural Product-Biosynthetic Gene Cluster
@@ -14,12 +14,12 @@ SVG
 Docker Reproducibility.  
 
 ## Installation guide
-### - 0. Install docker engine
+### 0. Install docker engine
 (If you have docker engine skip this step)  
 `$ curl -fsSL https://get.docker.com/ | sh `  
 *if you don’t have curl search on this document curl installation  
 
-This step may be before hello-world
+*This step may be before hello-world  
      `sudo usermod -aG docker your-user`
 
 ###### Important step:   
@@ -29,7 +29,7 @@ May be important to restart your computer, not just log out yor session, or mayb
 `$ docker run hello-world`  
 Docker starting tutorial and also Windows/Mac installation available at [Docker] (https://docs.docker.com/linux/step_one/)   
 
-### -1 Set your database  
+### 1 Set your database  
 Create an empty directory that contains your RAST-genome data base, your Rast_Ids file and your query.
 `$ mkdir mydir`
 place inside my dir your files:  
