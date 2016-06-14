@@ -65,4 +65,9 @@ $ which curl
 $ sudo apt-get update
 $ sudo apt-get install curl
 
-
+### To do list
+- [x] Redirect process to a different folder so multiple runs can be performed without data mess
+- [ ] Write the tutorial
+- [ ] Write a myRast Docker file
+- [ ] Learn Docker-Apache to link with Evomining
+- [ ] Test with many users
