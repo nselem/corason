@@ -3,9 +3,9 @@ Bioinformatic Tools for study Evolution of metabolic diversity
 
 ## CORASON
 ### CORe Analysis of Syntenic Orthologs for priorize Natural Product-Biosynthetic Gene Cluster
-CORASON searchs for gene clusters 
-Input: query gen and RAST genome database.
-Output: SVG graph with clusters sorted according to core genomic tree from clusters.
+CORASON searchs for gene clusters   
+Input: query gen and RAST genome database.  
+Output: SVG graph with clusters sorted according to core genomic tree from clusters.  
 
 CORASON was developed to find biosynthetic gene clusters, but it can used for any kind of clusters.
 
