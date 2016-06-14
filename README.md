@@ -25,7 +25,7 @@ Remember to replace your-user with your linux user (Ex `sudo usermod -aG docker 
 
 ###### Important step:  
 Log out from your ubuntu session (restart the machine)  and get back in into your user session before the next step
-You may need to restart your computer, not just log out yor session in order to changes to take effect.
+You may need to restart your computer, not just log out your session in order to changes to take effect.
 
 Test your docker engine with:  
 `$ docker run hello-world`  
