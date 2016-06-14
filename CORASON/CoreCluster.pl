@@ -41,11 +41,11 @@ GetOptions(
         'verbose' => \my $verbose,
         'queryfile=s' => \my $queries,
         'special_org=i' => \my $special_org,
-        'e_value=f'=> \(my $e_value=.000001), 		# E value. Minimal for a gene to be considered a hit.
+        'e_value=f'=> \(my $e_value=0.000001), 		# E value. Minimal for a gene to be considered a hit.
         'bitscore=i'=>\(my $bitscore=0),  		## Revisar el archivo .BLAST.pre para tener idea de este parámetro.
         'cluster_radio=i'=>\(my $cluster_radio=10), 	#number of genes in the neighborhood to be analized
-        'e_cluster=f'=>\(my $e_cluster=.001), #Query search e-value for homologies from reference cluster, values above this will be colored
-        'e_core=f'=>\(my $e_core=.001) ,  
+        'e_cluster=f'=>\(my $e_cluster=0.001), #Query search e-value for homologies from reference cluster, values above this will be colored
+        'e_core=f'=>\(my $e_core=0.001) ,  
         'list=s'=>\my $lista , ##Wich genomes would you process in case you might, otherwise left empty for whole DB search
         'rescale=i'=>\(my $rescale = 85000) ,
         'num=i'=>\my $num ,  #the number of genomes to be analized in case you used the option $LIST, comment if $LIST is empty
@@ -53,8 +53,9 @@ GetOptions(
 	'help'     =>   sub { HelpMessage(0) },
         ) or HelpMessage(1);
 
-die "$0 requires the license list argument (--list\n" unless $lista;  ## A genome list is mandatory
-die "$0 requires the license list argument (--list\n" unless $rast_ids;  ## A genome names list is mandatory
+die "$0 requires the list argument (--list\n" unless $lista;  ## A genome list is mandatory
+die "$0 requires the rast_ids argument (--list\n" unless $rast_ids;  ## A genome names list is mandatory
+die "$0 requires the special_org argument (--list\n" unless $special_org;  ## A genome names list is mandatory
 
 my $dir=&Cwd::cwd();            ##The path of your directory
 my $name=pop @{[split m|/|, $dir]};             ##The path of your directory
@@ -95,24 +96,24 @@ print "Analising cluster with hits according to the query sequence\n\n";
 ($num,$lista)=split(/\t/,$new_data);
 #$num=$st[0]; 
 #$lista=$st[1];
-	if ($verbose) {print "$num clusters found. Ids: $lista\n\n";}
+	if ($verbose) {print "\n$num clusters found. Ids: $lista\n\n";}
 	my $NumClust= `ls *.input2|wc -l`;
 	chomp $NumClust;
 	#$NumClust=~s/\r//;
 	print "There are $NumClust organisms with similar clusters\n"; 
-	$report=$report. "\n\nThere are $NumClust organisms with similar clusters"; 
+	$report=$report. "\n\nThere are $NumClust organisms with similar clustersi\n"; 
 #__________________________________________________________________________________________________________
 print "Creando arbol de Hits del query, sin considerar los clusters\n";
 	`cat *.input2> PrincipalHits`;
 
-	print "Alineando las secuencias \n";
-	system "muscle -in PrincipalHits -out PrincipalHits.muscle -fasta -quiet -group";
+        print "\nAligning Sequences \n";
+        system "muscle -in PrincipalHits -out PrincipalHits.muscle -fasta -quiet -group";
 
-	print "Rasurando las secuencias\n";
-	system "Gblocks PrincipalHits.muscle -b4=5 -b5=n -b3=5";
-	system("RenamePrincipalHits.pl PrincipalHits $rast_ids");
+        print "\nShaving alignments with Gblocks\n";
+        system "Gblocks PrincipalHits.muscle -b4=5 -b5=n -b3=5";
+        system("RenamePrincipalHits.pl PrincipalHits $rast_ids");
 
-	print "Convirtiendo a formato estocolmo\n";
+        print "\Saving as Stockolm format\n";
 	system(" converter.pl RightNamesPrincipalHits.txt ");
 	#constructing a tree with quicktree with a 100 times bootstrap
 	system "quicktree -i a -o t -b 100 RightNamesPrincipalHits.stockholm > PrincipalHits_TREE.tre";
