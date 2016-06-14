@@ -48,7 +48,7 @@ Use absolute path to your dir, if you don’t know the path you can place yorsel
 `$ pwd`
 /usr/src/CORASON is fixed at the docker images, you should always use this name.  
 
-#####Important  
+##### Important  
 First time you perform `docker run ` will be very slow because docker image is being downloaded, its only first time won’t happen again.
 
 ### 3. Run CORASON inside your docker  
@@ -60,7 +60,8 @@ query.svg query_Report *.tre will be on /mypath/mydir/
 
 ### Links  
 Code and docker file located at:
-https://github.com/nselem/EvoDivMet
+[Code] (https://github.com/nselem/EvoDivMet  )
+[Docker] (https://hub.docker.com/r/nselem/evodivmet/  )
 
 ### curl installation
 - `$ which curl`
@@ -68,7 +69,8 @@ https://github.com/nselem/EvoDivMet
 -  `$ sudo apt-get install curl`
 
 ### To do list
-- [x] Redirect process to a different folder so multiple runs can be performed without data mess
+- [ ] Create a direct access with Logo
+- [ ] Redirect process to a different folder so multiple runs can be performed without data mess
 - [ ] Write the tutorial
 - [ ] Write a myRast Docker file
 - [ ] Learn Docker-Apache to link with Evomining
