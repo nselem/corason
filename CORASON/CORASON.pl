@@ -62,7 +62,6 @@ my $number=get_number($list,$list_all,$rast_ids);
 #my $pause=<STDIN>;
 
 system ("CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids");
-system ("CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids");
 
 print "Now I will write the module\n";
 
