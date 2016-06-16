@@ -2,6 +2,7 @@
 Bioinformatic Tools for studying evolution of metabolic diversity
 
 ## CORASON
+[[[http://148.247.230.39/newevomining/new/evomining_web/corason.svg|alt="CORASON Logo"|height=120px|width=310px]]](http://148.247.230.39/newevomining/new/evomining_web/index.html)
 ### CORe Analysis of Syntenic Orthologs for priorize Natural Product-Biosynthetic Gene Cluster
 CORASON searchs for gene clusters   
 Input: query gen and RAST genome database.  
