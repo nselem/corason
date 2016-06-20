@@ -3,11 +3,13 @@ use strict;
 use warnings;
 
 my $verbose;
+my $rast_ids=$ARGV[0];
+my $outname=$ARGV[1];
 
 `rm RightNames.txt`;
-open (NAMES,"RAST.IDs") or die "Couldn't open NAMES file $!";
-open (SEQUENCE,"SalidaConcatenada.txt") or die "Couldn't open Concatenados file $!";
-open (BAYES,">>RightNames.txt") or die "Couldn't open RightNames file $!";
+open (NAMES,"$rast_ids") or die "Couldn't open NAMES file $!";
+open (SEQUENCE,"$outname/SalidaConcatenada.txt") or die "Couldn't open $outname/SalidaConcatenada.txt file $!";
+open (BAYES,">>$outname/RightNames.txt") or die "Couldn't open $outname/RightNames file $!";
 
 my %SEQUENCES;
 my %NAMES;
@@ -37,7 +39,7 @@ foreach my $line (<NAMES>){
 #	$count++;
 	my $name=$st[2];
 #	$name=~s/\r//;
-	$name=~s/[)(,.-]=/_/g;
+	$name=~s/[\[\)\(\,\.\-\]\=]/_/g;
 	$name=~s/\s/_/g;	
 	$name=~s/__/_/g;
 	$refNAMES->{$org}=$name;

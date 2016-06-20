@@ -14,6 +14,7 @@ my $NAME=pop @{[split m|/|, $dir]};                       ##Name of the group (T
 #my $outdir="$dir2/$infile";
 my $list=$ARGV[0];
 my $num=$ARGV[1];
+my $outname=$ARGV[2];
 #my $DesiredGenes="Core";
 
 ## Leer por subsistema Replicar el trabajo de RAST
@@ -39,7 +40,7 @@ sub readList;
 #my $list=listas($NUM2,$Lista);  #$list stores in a string the genomes that will be used
 my @LISTA=split(",",$list);
 
-my $FUNCTION_PATH="$dir/$NAME/FUNCTION";
+my $FUNCTION_PATH="$dir/$outname/$NAME/FUNCTION";
 unlink( $FUNCTION_PATH);
 `rm -r $FUNCTION_PATH`;
 `mkdir $FUNCTION_PATH`;
@@ -47,11 +48,13 @@ unlink( $FUNCTION_PATH);
 
 
 foreach my $num (@LISTA){
-	EscribeSalida($num);
+	EscribeSalida($outname,$dir,$num);
 	}
 ####################################################################
 ####################################################################
 sub EscribeSalida {
+	my $outname=shift;
+	my $dir=shift;
 	my $num=shift;
 	my %FIG; #Fig, Category, SubCategory # Subsystem #Role 
 	my @CORE;
@@ -63,9 +66,9 @@ sub EscribeSalida {
 
 	my $ReactionFile="$dir/GENOMES/$org\.txt";  ## File cvs from RAST with ALL the reactions (From the spreadsheet reaction)
 	#my $FigsFile="$dir/$num.figs"; ## File with the figs or feachures id for wich we want the function
-	my $genome_file="$dir/MINI/$num.faa";
+	my $genome_file="$dir/$outname/MINI/$num.faa";
 
-	my $core_file="$dir/$NAME/FASTAINTERporORG/$num.interFastatodos";
+	my $core_file="$dir/$outname/$NAME/FASTAINTERporORG/$num.interFastatodos";
 	#print "El core $core_file $dir/$NAME/FASTAINTERporORG/$num.interFastatodos \n";
 	#print"En lista $dir/$NAME/FASTAINTERporORG/$num.interFastatodos\n";
 	#print "$genome_file\n";	
@@ -84,8 +87,8 @@ sub EscribeSalida {
 	if ($Mode =~/F/){
 #		HeadF(); #Gene	#Subsystem	#Role	# 
 		my $core=1; my $complement=0;
-		mainFig($num,\%FIG,\@CORE,$core,$NAME);   #escribe Salida
-		mainFig($num,\%FIG,\@COMPLEMENT,$complement,$NAME);   #escribe Salida
+		mainFig($outname,$num,\%FIG,\@CORE,$core,$NAME);   #escribe Salida
+		mainFig($outname,$num,\%FIG,\@COMPLEMENT,$complement,$NAME);   #escribe Salida
 		}
 }
 ###################################################################
@@ -237,6 +240,7 @@ sub readSubsystem{
 	}
 
 sub mainFig{  ## Returns the function for each gene (Sorted by Fig number)
+	my $outname=shift;
 	my $num=shift;
 	my $refFig=shift;
 	my $refQUERYS=shift;
@@ -249,8 +253,8 @@ sub mainFig{  ## Returns the function for each gene (Sorted by Fig number)
 	my @SORTED;
 	my %PEGS;
 
-	if ($core==1){	open (OUTFILE,">$dir/$NAME/FUNCTION/$num.core.function") or die "Could not open CORE function file $!";}
-	if ($core==0){	open (OUTFILE,">$dir/$NAME/FUNCTION/$num.complement.function") or die "Could not open COMPLEMENT function file $!";}
+	if ($core==1){	open (OUTFILE,">$dir/$outname/$NAME/FUNCTION/$num.core.function") or die "Could not open CORE function file $dir/$outname/$NAME/FUNCTION/$num.core.function $!";}
+	if ($core==0){	open (OUTFILE,">$dir/$outname/$NAME/FUNCTION/$num.complement.function") or die "Could not open COMPLEMENT function file $dir/$outname/$NAME/FUNCTION/$num.complement.function $!";}
 	
 
 

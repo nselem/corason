@@ -54,11 +54,12 @@ GetOptions(
 	 'help'     =>   sub { HelpMessage(0) },
         ) or HelpMessage(1);
 
-die "$0 requires the license list argument (--list\n" unless $list;  ## A genome list is mandatory
-die "$0 requires the license list argument (--list\n" unless $rast_ids;  ## A genome names list is mandatory
+die "$0 requires the list argument (--list\n" unless $list;  ## A genome list is mandatory
+die "$0 requires the rast_ids argument (--rast_ids\n" unless $rast_ids;  ## A genome names list is mandatory
 
 my $query_name=$queries;			
-$query_name=~s/.query//;
+$query_name=~s/.query//; # $outname
+system("cp $queries $query_name/$queries");
 if ($verbose){print "Your special org is $special_org\n";}
 my %query=ReadFile($queries);
 my $DB="ProtDatabase";		##DataBAse Name
@@ -73,25 +74,25 @@ printVariables();
 ################################################################################################################# 
 
 				print "I will search homologous genes in organisms\n";
-`mkdir MINI`;
-print "Parameters\n";
+`mkdir $query_name/MINI`;
+#print "Parameters\n";
 if($MakeDB){
 	$MakeDB=1;
-	print "I will create a smaller database with the selected genomes\n";
-	$DB="temDatabase";
+	print "I will create a Database with selected genomes\n";
+	$DB="$query_name\/temDatabase";
 	}
 else{
 	$MakeDB=0;	
-	print"I will not create a new DB so I will use the full DB ProtDatabase\n";
+	print"I will use the full DB ProtDatabase\n";
 	}
 
 
-MakeBlast($MakeDB,$type,$query_name,$eSeq,$DB,$bitscore,$num,$genome_dir,$rast_ids,@LISTA); 	
+MakeBlast($query_name,$MakeDB,$type,$query_name,$eSeq,$DB,$bitscore,$num,$genome_dir,$rast_ids,@LISTA); 	
 				## Search query by blast in all the other organisms
 				## Save blast results on a $name file
 my %Hits; 			
 my %AllHits;
-BestHits($query_name,\%Hits,\%AllHits);
+BestHits($query_name,$query_name,\%Hits,\%AllHits);
 				## BestHits  ##Read Blast file created by MakeBlast sub whit at least $eSeq as evalue cutoff
 				## Stores best hits on Hash Hits  BBBYYYY identity
 				#refHits->{$name}{$org}=[$percent,$peg];
@@ -100,6 +101,7 @@ print "Looking for hits\n";
 		
 
 my %ORGANISMS=readNames($rast_ids);
+
 
 #my $PEG=$Hits{$name}{$special_org}[1];
 my $PEG=$Hits{$query_name}{$special_org}[1];
@@ -117,17 +119,17 @@ my $eClust=$e_cluster;
 my %CLUSTER;
 				print "Searching for homologous gene in clusters \n";
 #### 
-my %CLUSTERcolor=BlastColor($PEG,$special_org,$cluster_radio,$num,$eClust,$DB,$genome_dir,$rast_ids,\%CLUSTER,@LISTA);
+my %CLUSTERcolor=BlastColor($query_name,$PEG,$special_org,$cluster_radio,$num,$eClust,$DB,$genome_dir,$rast_ids,\%CLUSTER,@LISTA);
 #foreach my $peg (sort keys %CLUSTERcolor){
 #	print "Peg $peg orgs $orgs";
 #	foreach my $orgs (@{$CLUSTERcolor{$peg}}){
 #		foreach my $color_percent(@{$CLUSTERCOLOR{$peg}[$orgs]}){
-#			print "$color_percent\t";
+#			print "Color $color_percent\t";
 #		}
 #		print "\n";
 #	}
 #}
-##print "Pausa para checar blast\n";
+##print "Pause to look into blast\n";
 ##my $pause=<STDIN>;
 				print "I have colored genes according to homology\n";		
 ## Color if pegi_orgj in Cluster{$peg} for some peg set colorNumber 
@@ -143,28 +145,28 @@ for my $orgs (sort keys %{$AllHits{$query_name}}){
 
 			my $peg=$sp[0];
 			my $percent=$sp[1];
-		#	print "Org Â¡$orgs! Hit Â¡$peg! percent $percent\n";
+		#	print "Org ¡$orgs! Hit ¡$peg! percent $percent\n";
 		
-			ContextArray($orgs,$peg,$special_org,$percent,\%ORGANISMS,\%AllHits);
+			ContextArray($query_name,$orgs,$peg,$special_org,$percent,\%ORGANISMS,\%AllHits);
 		}
 }
 
 
 #for my $orgs(keys %ORGANISMS){
 #	if (!(-e "$orgs.input")){
-#		open FILE, ">$orgs.input" or die "Could not create input file\n";
+#		open FILE, ">$orgs.input" or die "Could not create input file $orgs.input\n";
 #		print FILE "0\t0\t-\t0\t$ORGANISMS{$orgs}\t0\t0\n";
 #		close FILE;
 #
-#		open FILE2, ">MINI/$orgs.faa" or die "Could not create input file\n";
+#		open FILE2, ">MINI/$orgs.faa" or die "Could not create input file MINI/$orgs.faa\n";
 #		close FILE2;
 #		}
 #}
 
 if ($verbose){print "$query_name, $special_org $PEG\n";}
-`rm Cluster*.*.*`;
-`rm Cluster*.*`;
-if($MakeDB==1){`rm temDatabase.*`;}
+`rm $query_name/Cluster*.*.*`;
+`rm $query_name/Cluster*.*`;
+if($MakeDB==1){`rm $query_name/temDatabase.*`;}
 #########################################################################################################################
 ##########################################################################################################################
 
@@ -205,6 +207,7 @@ sub readNames{
 
 #____________________________________________________________________________________________
 sub ContextArray{
+	my $query_original=shift;
 	my $orgs=shift;
 	my $peg=shift;
 	my $special_org=shift;
@@ -213,10 +216,10 @@ sub ContextArray{
 	my $refHits=shift;
 
 	#if ($verbose) {print "org $orgs peg $peg\n";}
-	open(FILE,">$orgs\_$peg.input")or die "could not open $orgs.input file $!";
-	open(FILE3,">$orgs\_$peg.input2")or die "could not open $orgs.input2 file $!";
+	open(FILE,">$query_original/$orgs\_$peg.input")or die "could not open $query_original/$orgs\_$peg.input file $!";
+	open(FILE3,">$query_original/$orgs\_$peg.input2")or die "could not open $query_original/$orgs\_.$peg.input2 file $!";
 
-	open(FILE2,">MINI/$orgs\_$peg.faa")or die "could not open $orgs.mini file $!";
+	open(FILE2,">$query_original/MINI/$orgs\_$peg.faa")or die "could not open $query_original/MINI/$orgs\_$peg.faa file $!";
 
 	my @CONTEXT;
 	my ($hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0)=getInfo($peg,$orgs);
@@ -315,7 +318,7 @@ sub getInfo{		## Read the txt
 
 	#print "Enter to continue on getInfo\n";
 	#my $pause=<STDIN>;
-	#print "\norg Â$orgs! peg Â¡$peg! hit $hit start $start stop $stop dir $dir func $func\n\n";	
+	#print "\norg $orgs! peg ¡$peg! hit $hit start $start stop $stop dir $dir func $func\n\n";	
 	#print "Grep $Grep\n\n";
 	return ($hit,$start,$stop,$dir,$func,$contig,$amin);
 }
@@ -370,32 +373,9 @@ sub getGenesContigReference{
 
 
 #_____________________________________________________________________________________
-sub listas{
-	my $num=shift;
-	my $list=shift;
-	my $lista="";
-
-	if ($list){ 
-		if ($verbose) {print "Lista de genomas deseados $list";}
-		$lista=$list;
-		}
-	else {
-		for( my $COUNT=1;$COUNT <= $num ;$COUNT++){
-			$lista.=$COUNT;
-			if($COUNT<$num){
-				$lista.=",";
-				}
-			}
-		}
-
-	return $lista;
-		
-	}
-
-#_____________________________________________________________________________________
 sub header{
 	my @LISTA=@_;
-	open(OUT, ">Concatenados.fna");
+	open(OUT, ">Concatenados.fna") or die "Couldn't open Concatenados.fna";
 
 	foreach $num (@LISTA){
 		#print "num $num\n";
@@ -410,7 +390,7 @@ sub header{
     				} 
     			}#end while EACH
   		close EACH;
-		#print "Acane el archivo $num\n";
+		#print "File $num done\n";
 
 		}#end 
 
@@ -419,13 +399,14 @@ sub header{
 
 #_____________________________________________________________________________________
 sub makeDB{
+	my $query_name=shift;
 	my $DB=shift;              
 	my $type=shift;
 	my @LISTA=@_;
 #	my $genome;
    
-        open(OUT, ">TempConcatenados.faa");
-           #     open(ALL, "lista.$num");
+        open(OUT, ">$query_name/TempConcatenados.faa") or die "Couldn't create $query_name/TempConcatenados.faa\n $!";
+           #     open(ALL, "lista.$num") or die "Couldn't open lista.$num \n $!";
 
         foreach my $genome (@LISTA){
                if($verbose){print "I will open  #GENOMES/$genome\.faa#\n";}
@@ -452,15 +433,16 @@ sub makeDB{
 
 		}
 	elsif($type eq 'prots'){
-                `makeblastdb -in TempConcatenados.faa -dbtype prot -out $DB.db`;
+                `makeblastdb -in $query_name/TempConcatenados.faa -dbtype prot -out $DB.db`;
                 print "Protein db was created \n";
 	}
 }
 #___________________________________________________________________________
 sub MakeBlast{
+	my $query_original=shift;
 	my $MakeDB=shift;
 	my $type=shift;
-	my $queries=shift;
+	my $query_name=shift;
 	my $evalueL=shift;
 	my $DBname=shift;
 	my $bitscore=shift;
@@ -469,8 +451,8 @@ sub MakeBlast{
 	my $rast_ids=shift;
 	my @LISTA=@_;
 	my $listfile='lista.'.$num;
-#       if ($verbose){print "DB $DBname\nMakeDB $MakeDB\ntyp $type\nueries $queries\nevalueL $evalueL\nbitscore $bitscore\nnum $num\ngenome dir $genome_dir\nrast ids $rast_ids\nLISta @LISTA\n";}
-	open FILE, ">$listfile" or die "Could not open file $num.lista" ;
+#       if ($verbose){print "DB $DBname\nMakeDB $MakeDB\ntyp $type\queries $query_name\nevalueL $evalueL\nbitscore $bitscore\nnum $num\ngenome dir $genome_dir\nrast ids $rast_ids\nLISta @LISTA\n";}
+	open FILE, ">$query_original/$listfile" or die "Could not open file $query_original/$listfile" ;
         
         if ($MakeDB==1){foreach my $num (@LISTA){print FILE "$num\n";}}
         else{for (my $i=1;$i<=$num;$i++){	print FILE "$i\n";}		}
@@ -483,17 +465,22 @@ sub MakeBlast{
 			print"$type type\n";
 			print"Doing blast nucleotide database\n";
 			header(@LISTA);
-			makeDB($DBname,$type,@LISTA);
-			blastnSeq($evalueL,$queries);	
+			makeDB($query_name,$DBname,$type,@LISTA);
+			blastnSeq($evalueL,$query_name);	
 			}
 	
 		elsif($type eq 'prots'){
 			print"$type type\n";
 			print "Aminoacid data will be analised\n";
-			`header.pl $genome_dir $rast_ids`;
+			`header.pl $genome_dir $rast_ids $query_name`;
+
+
 			print "Making blast db\n";
-			makeDB($DBname,$type,@LISTA);
-			blastpSeq($evalueL,$queries,$DBname,$bitscore);	
+			makeDB($query_name,$DBname,$type,@LISTA);
+
+			blastpSeq($query_original,$evalueL,$query_name,$DBname,$bitscore);	
+
+
 			}
 		else {
 			print"$type is not an accepted database type\n";
@@ -502,12 +489,12 @@ sub MakeBlast{
 		}
 	else{ ##Si no existe BAse de datos Concatenados.faa poner un warning
 		if ($type eq 'nuc'){
-			blastnSeq($evalueL,$queries);	
+			blastnSeq($evalueL,$query_name);	
 				
 			}
 
 		elsif($type eq 'prots'){
-			blastpSeq($evalueL,$queries,$DBname,$bitscore);	
+			blastpSeq($query_original,$evalueL,$query_name,$DBname,$bitscore);	
 			}
 		else {
 			print"$type is not an accepted database type\n";
@@ -553,23 +540,24 @@ sub blastnSeq{
 	close PARSER;
 	#if (-e BLAST ){system (rm -r BLAST);}
 	#system(mkdir BLAST);
-	#print "Se corriÃ³ el blast\n";
-	#print "\nLista $list#\n";
-	#print "Inicia bÃºsqueda de listas de ortologos \n";
+	#print "blast has run\n";
+	#print "\nList $list#\n";
+	#print "Orthology list search starts \n";
 	}
 #_____________________________________________________________________________________
 sub blastpSeq{
+	my $query_original=shift;
 	my $e=shift;
-	my $name=shift;
+	my $query_name=shift;
 	my $DBname=shift;
 	my $bitscore=shift;
 
 #	if ($verbose) {print"Now we will start the blast  with evalue $e name $name database $DBname and bitscore $bitscore\n";}
-	if (-e 	"$name.parser"){unlink ("$name.parser");}	if (-e 	"$name.BLAST"){unlink ("$name.BLAST");}
-	`blastp -db $DBname.db -query $name.query -outfmt 6 -evalue $e -num_threads 12 -out $name.BLAST.pre`;
-	open (PREBLAST,"$name.BLAST.pre") or die "Could not open $name.BLAST.pre $!";
-	open (BLAST,">$name.BLAST") or die "Could not open $name.BLAST $!";
-#	open (PARSER,">$name.PARSER") or die "Could not open $name.BLAST $!";  #Salva el fasta
+	if (-e 	"$query_original/$query_name.parser"){unlink ("$query_original/$query_name.parser");}	if (-e 	"$query_original/$query_name.BLAST"){unlink ("$query_original/$query_name.BLAST");}
+	`blastp -db $DBname.db -query $query_original/$query_name.query -outfmt 6 -evalue $e -num_threads 12 -out $query_original/$query_name.BLAST.pre`;
+	open (PREBLAST,"$query_original/$query_name.BLAST.pre") or die "Could not open $query_original/$query_name.BLAST.pre $!";
+	open (BLAST,">$query_original/$query_name.BLAST") or die "Could not open $query_original/$query_name.BLAST $!";
+#	open (PARSER,">$query_original/$query_name.PARSER") or die "Could not open $query_original/$query_name.BLAST $!";  #Salva el fasta
         
 	my @HITS;
 	
@@ -587,12 +575,12 @@ sub blastpSeq{
 		}
 
 	foreach my $hit(@HITS){
-	#print "This is a hit Â¡$hit!\n";
+	#print "This is a hit ¡$hit!\n";
 	}
 
-	`blastp -db $DBname.db -query $name.query -evalue $e -num_threads 4 -out $name.parser.pre` ;
-	open (PREPARSER,"$name.parser.pre") or die "Could not open $name.parser.pre $!";
-	open (PARSER,">$name.parser") or die "Could not open $name.parser $!";
+	`blastp -db $DBname.db -query $query_original/$query_name.query -evalue $e -num_threads 4 -out $query_original/$query_name.parser.pre` ;
+	open (PREPARSER,"$query_original/$query_name.parser.pre") or die "Could not open $query_original/$query_name.parser.pre $!";
+	open (PARSER,">$query_original/$query_name.parser") or die "Could not open $query_original/$query_name.parser $!";
 	my %SEQ;
 	my $key;
 	foreach my $line (<PREPARSER>){
@@ -601,7 +589,7 @@ sub blastpSeq{
 		if ($line=~m/>/){
 			$key=$line;
 			$key=~s/>\s*//;
-			#print "Linea del parser $key \n";
+			#print "parser line: $key \n";
 			if ($key~~@HITS){
 				$SEQ{$key}="";
 				}
@@ -636,19 +624,20 @@ sub blastpSeq{
 #____________________________________________________________
 #_____________________________________________________________________________________
 sub BestHits{ ##For a given query
-	my $name=shift;
+	my $query_original=shift; ## Original query name for folder
+	my $name=shift; ## blast query variabl
 	my $refHits=shift;
 	my $refAllHits=shift;
 #/	open FILETEST, ">>aver" or die "Couldn run test";
 
-	open FILE,  "$name.BLAST" or die "I can not open the input FILE $name.BLAST\n";
-#	print "Creando HAsh BestHits\n";
+	open FILE,  "$query_original/$name.BLAST" or die "I can not open the input FILE $query_original/$name.BLAST\n";
+#	print "initialize Hash BestHits\n";
 	$refHits->{$name}=();
 	$refAllHits->{$name}=();
 
 	while (my $line=<FILE>){
 		chomp $line;
-	#	print "$line\n";
+	#	print "Blast line: $line\n";
 		my @sp=split("\t",$line);
 		my @sp1=split('\|',$sp[1]);
 		my @sp2=split('\.',$sp1[1]);
@@ -681,7 +670,7 @@ sub BestHits{ ##For a given query
 ## READ QUERY
 sub ReadFile{
 my $queries=shift;
-	open (FILE,"$queries") or die "I can not open the input FILE #$queries#\n";
+	open (FILE,"$queries") or die "I can not open the input FILE #$queries# $!\n";
 
 
 	my %query;
@@ -713,7 +702,7 @@ my $queries=shift;
 
 #________________________________________________________________________________
 sub BlastColor{
-
+	my $query_name=shift;
 	my $peg=shift;
 	my $special_org=shift;
 	my $cluster_radio=shift;
@@ -746,16 +735,16 @@ sub BlastColor{
 
                 ## print filesnamed Cluster_peg.query with sequence of the neighbour
                 if($sequence ne ""){
-                        open(QUERY,">Cluster$i.query") or die"Could not open cluster file $i ";
+                        open(QUERY,">$query_name/Cluster$i.query") or die"Could not open cluster file Cluster$i.query $! \n ";
                         print QUERY ">$hit\n$sequence";         
                         #print ">$hit\n$sequence";
                         close QUERY;
                         }
 		## Do blast for each one
                 my $nameClust="Cluster$i";
-                MakeBlast(0,$type,$nameClust,$eClust,$DBname,0,$num,$genome_dir,$rast_ids,@LISTA);
+                MakeBlast($query_name,0,$type,$nameClust,$eClust,$DBname,0,$num,$genome_dir,$rast_ids,@LISTA);
 		                ## Save BEst Hits in a hash
-                my %HitsClust; my %AllHitsClust; BestHits($nameClust,\%HitsClust,\%AllHitsClust);
+                my %HitsClust; my %AllHitsClust; BestHits($query_name,$nameClust,\%HitsClust,\%AllHitsClust);
 
                 ## %CLUSTER{$peg}={peg1_org1,peg2_org2,...}
                 $refCLUSTER->{$i}=[];
@@ -801,7 +790,7 @@ sub setColor{
 	
 	#print "Peg $peg, Org $orgs \n ";
 	if (exists $CLUSTERcolor{$peg}[$orgs]){ ## Cualquier peg en cualquier organismo
-		if ($verbose) {print "Arreglo @{$CLUSTERcolor{$peg}[$orgs]}\n";}
+		if ($verbose) {print "Array @{$CLUSTERcolor{$peg}[$orgs]}\n";}
 		foreach my $color_percent (@{$CLUSTERcolor{$peg}[$orgs]}){ ## Puede parecerse a distintos miembros del cluster indicados por los colores, el numero de color es el numero de gen en el cluster
 			my @sp=split("_",$color_percent); ## viene acompaÃ±ado de su porcentaje
 			my $colorInHash=$sp[0]; 

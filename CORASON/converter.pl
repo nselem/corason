@@ -17,7 +17,7 @@ sub writeStockholm{
 	my $length;
 	my $currentPos=0;
 
-	open OUTPUT, ">$file.stockholm" or die "couldn't create file\n";
+	open OUTPUT, ">$file.stockholm" or die "couldn't create file $file.stockholm $!\n";
 	print OUTPUT "# STOCKHOLM 1.0";
 	while($size>0){
 		for my $iD (@ids){
@@ -44,7 +44,7 @@ sub readFile{
 	my %dict;
 	my $id;
 
-	open FILE, $file or die "couldn't open file\n";
+	open FILE, $file or die "couldn't open filei $file\n";
 
 	while(<FILE>){
 		$_=~s/\s+//g;

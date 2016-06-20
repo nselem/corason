@@ -7,7 +7,8 @@ use warnings;
 
 my $genome_dir=$ARGV[0];
 my $RAST_IDs=$ARGV[1];
-my $outfile="Concatenados.faa";
+my $query_name=$ARGV[2];
+my $outfile="$query_name/Concatenados.faa";
 
 Concatenar($RAST_IDs, $genome_dir, $outfile);
 

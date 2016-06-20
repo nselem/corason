@@ -53,9 +53,10 @@ GetOptions(
 	'help'     =>   sub { HelpMessage(0) },
         ) or HelpMessage(1);
 
-die "$0 requires the list argument (--list\n" unless $lista;  ## A genome list is mandatory
-die "$0 requires the rast_ids argument (--list\n" unless $rast_ids;  ## A genome names list is mandatory
-die "$0 requires the special_org argument (--list\n" unless $special_org;  ## A genome names list is mandatory
+die "$0 requires a query (--query\nfor help type:\ncorason.pl -h" unless $queries;  ## A genome list is mandatory
+die "$0 requires the list argument (--list\nfor help type:\ncorason.pl -h" unless $lista;  ## A genome list is mandatory
+die "$0 requires the rast_ids file (--rast_ids\nfor help type:\ncorason.pl -h" unless $rast_ids;  ## A genome names list is mandatory
+die "$0 requires the special_org argument (--special_org\nfor help type:\ncorason.pl -h" unless $special_org;  ## A genome names list is mandatory
 
 my $dir=&Cwd::cwd();            ##The path of your directory
 my $name=pop @{[split m|/|, $dir]};             ##The path of your directory
@@ -69,106 +70,107 @@ printVariables($verbose);
 my @LISTA=split(",",$lista);
 my $outname=$queries;
 $outname=~s/\.query//;
+if(!-e $outname) {system("mkdir $outname");}
 if ($verbose ){print "Your courrent directory: $name\n";}
 
 my $report="";
-if (-e "$outname\_Report"){`rm $outname\_Report`;}
+if (-e "$outname/$outname\_Report"){`rm $outname/$outname\_Report`;}
 $report=$report."Queries $queries\tSpecial Organism $special_org\te_value $e_value\tbitscore $bitscore\tcluster radio $cluster_radio\te_core $e_core\trescale $rescale\tlist $lista\tnumber $num\tname folder $name\tdir $dir\tblast $blast\t";
 
 
 #_________  Query blast ________________________________________________________________________________
-	print "Searching sequences from query\n\n";
-	if ($lista eq ""){
-		## AQUI QUE PASA CON LOS COLORES!!!!!!!!!!!!!!!!!
-		system("1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type  prots ");
+	print "\nSearching sequences from query (1_Context_text.pl)\n";
+my $NUM = `wc -l < $rast_ids`;
+	if ($NUM == $num){
+		## All genomes will be procesed!!!!!!!!!!!!!!!!!
+		system("1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type  prots -makedb ");
                 }
         else {
-                print "Searching on reduced database (only in clusters on $lista)\n";        
-		system("1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type prots -makedb prots");
+                print "Searching on clusters in reduced list: $lista\n";        
+		system("1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type prots -makedb");
                }
 	print "Sequences search finished\n\n";
 #___________________ end Query blast ________________________________________________________________________
 
-
 print "Analising cluster with hits according to the query sequence\n\n";
-	my $new_data=`ReadingInputs.pl`; 
+	my $new_data=`ReadingInputs.pl $outname`; 
 	my @st=split(/\t/,$new_data);
 ($num,$lista)=split(/\t/,$new_data);
 #$num=$st[0]; 
 #$lista=$st[1];
 	if ($verbose) {print "\n$num clusters found. Ids: $lista\n\n";}
-	my $NumClust= `ls *.input2|wc -l`;
+	my $NumClust= `ls $outname/*.input2|wc -l`;
 	chomp $NumClust;
 	#$NumClust=~s/\r//;
 	print "There are $NumClust organisms with similar clusters\n"; 
 	$report=$report. "\n\nThere are $NumClust organisms with similar clustersi\n"; 
 #__________________________________________________________________________________________________________
-print "Creando arbol de Hits del query, sin considerar los clusters\n";
-	`cat *.input2> PrincipalHits`;
+print "Creating query hits tree, without considering the core-clusters\n";
+	`cat $outname/*.input2> $outname/PrincipalHits`;
 
         print "\nAligning Sequences \n";
-        system "muscle -in PrincipalHits -out PrincipalHits.muscle -fasta -quiet -group";
+        system "muscle -in $outname/PrincipalHits -out $outname/PrincipalHits.muscle -fasta -quiet -group";
 
         print "\nShaving alignments with Gblocks\n";
-        system "Gblocks PrincipalHits.muscle -b4=5 -b5=n -b3=5";
-        system("RenamePrincipalHits.pl PrincipalHits $rast_ids");
+        system "Gblocks $outname/PrincipalHits.muscle -b4=5 -b5=n -b3=5";
+        system("RenamePrincipalHits.pl $outname PrincipalHits $rast_ids");
 
-        print "\Saving as Stockolm format\n";
-	system(" converter.pl RightNamesPrincipalHits.txt ");
-	print ("constructing a tree with quicktree with a 100 times bootstrap\n");
-	system "quicktree -i a -o t -b 100 RightNamesPrincipalHits.stockholm > PrincipalHits_TREE.tre";
-	system "mv PrincipalHits_TREE.tre $outname\_PrincipalHits.tre";
-        print ("Getting Newick labels\n");
-	system "nw_labels -I $outname\_PrincipalHits.tre>PrincipalHits.order";
+        print "Saving as Stockolm format\n";
+	system(" converter.pl $outname/RightNamesPrincipalHits.txt ");
+	#constructing a tree with quicktree with a 100 times bootstrap
+	system "quicktree -i a -o t -b 100 $outname/RightNamesPrincipalHits.stockholm > $outname/PrincipalHits_TREE.tre";
+	system "mv $outname/PrincipalHits_TREE.tre $outname/$outname\_PrincipalHits.tre";
+
+	system "nw_labels -I $outname/$outname\_PrincipalHits.tre>$outname/PrincipalHits.order";
 	my $INPUTS=""; ## Orgs sorted according to a tree (Will be used on the Context draw)
-	my $orderFile="PrincipalHits.order";
+	my $orderFile="$outname/PrincipalHits.order";
 #______________________________________________________________________________________________________________
 	print "Searching genetic core on selected clusters\n";
-	system("2_OrthoGroups.pl -e_core $e_core -list $lista -num $num -rast_ids $rast_ids ");
+	system("2_OrthoGroups.pl -e_core $e_core -list $lista -num $num -rast_ids $rast_ids -outname $outname");
 	print "Core finished!\n\n";
-	my $boolCore= `wc -l Core`;
+	my $boolCore= `wc -l $outname/Core`;
 	chomp $boolCore;
 	$boolCore=~s/[^0-9]//g;
 	$boolCore=int($boolCore);
 	print "Elements on core: $boolCore!\n";
 #____________________________________________________________________________________________________________
 if ($boolCore>1){
-	print "There is a core with at least to genes on this cluster\n";
+	print "There is a core with at least two genes on this cluster\n";
 	$report=$report."\nThere is a core composed by $boolCore orhtolog on this cluster\n";
 	$report=$report. "Enzyme functions on reference organisms are given by:\n";
 	## Obteniendo el cluster del organismo de referenecia mas parecido al query
 	# Abrimos los input files de ese organismo y tomamos el de mejor score	
 	my $specialCluster=specialCluster($special_org);
-	print "Mejor cluster $specialCluster\n";
-       	my $functions=`cut -f1,2 $name/FUNCTION/$specialCluster.core.function `;
+	print "Best cluster $specialCluster\n";
+       	my $functions=`cut -f1,2 $outname/$name/FUNCTION/$specialCluster.core.function `;
 #       	print "cut -f1,2 $name/FUNCTION/$specialCluster.core.function ";
 #	print "Function $functions#\n";
 	$report=$report."\n".$functions;
 	print "Aligning...\n";
-	system ("multiAlign_gb.pl $num $lista");
+	system ("multiAlign_gb.pl $num $lista $outname");
 	print "Sequences were aligned\n\n";
 
-	print "Creating matrix..\n";
-	system("ChangeName.pl");
-	system("EliminadorLineas.pl");
+	print "Creating aminoacid core cluster matrix..\n";
+	system("ChangeName.pl $outname");
+	system("EliminadorLineas.pl $outname");
 
-	system("Concatenador.pl");
-	system("Rename_Ids_Star_Tree.pl");
-	my $line =`perl -ne \'print if \$\. == 2\' RightNames.txt `;
+	system("Concatenador.pl $outname");
+	system("Rename_Ids_Star_Tree.pl $rast_ids $outname");
+	my $line =`perl -ne \'print if \$\. == 2\' $outname/RightNames.txt `;
 	#print "`perl -ne 'print if \$\. == 2' RightNames.txt `";
 	#print "Line $line\n";
  	my $len = map $_, $line =~ /(.)/gs;
 	$len--;
 	$report=$report."\nAminoacid array size = $len \n\n";
 	print "Formating matrix..\n";
-	system ("converter.pl RightNames.txt");
+	system ("converter.pl $outname/RightNames.txt");
 
-	print "constructing a tree with quicktree with a 100 times bootstrap";
-	system "quicktree -i a -o t -b 100 RightNames.stockholm > BGC_TREE.tre";
-	system "mv BGC_TREE.tre $outname\_BGC.tre";
-	system "nw_labels -I $outname\_BGC.tre>$outname\_BGC_TREE.order";
+	print "Constructing a tree with quicktree with a 100 times bootstrap\n";
+	system "quicktree -i a -o t -b 100 $outname/RightNames.stockholm > $outname/BGC_TREE.tre";
+	system "mv $outname/BGC_TREE.tre $outname/$outname\_BGC.tre";
+	system "nw_labels -I $outname/$outname\_BGC.tre>$outname/$outname\_BGC_TREE.order";
 
- 	$orderFile="$outname\_BGC_TREE.order";
+ 	$orderFile="$outname/$outname\_BGC_TREE.order";
 	print "I will draw with concatenated tree order\n";
 	$INPUTS=getDrawInputs($orderFile);
 	}
@@ -179,7 +181,7 @@ if ($boolCore>1){
 			$report=$report. "I will draw with the single hits order\n";
 			$INPUTS=getDrawInputs($orderFile);
         		}
-		my $line =`perl -ne \'print if \$\. == 2\' PrincipalHits `;
+		my $line =`perl -ne \'print if \$\. == 2\' $outname/PrincipalHits `;
  		my $len = map $_, $line =~ /(.)/gs;
 		$len--;
 		$report=$report."\nAminoacid array size = $len \n\n";
@@ -187,17 +189,18 @@ if ($boolCore>1){
 #_____________________________________________________________________________________________
 
 print "Now SVG file will be generated with inputs: $INPUTS\n\n";
-	system("3_Draw.pl $rescale $INPUTS");
+#	print "3_Draw.pl $rescale $INPUTS $outname";
+	system("3_Draw.pl $rescale $INPUTS $outname");
 
 print "SVG  file generated\n\n";
-`mv Contextos.svg $outname\.svg`;
+`mv $outname/Contextos.svg $outname/$outname\.svg`;
 
-open (REPORTE, ">$outname\_Report") or die "Couldn't open reportfile $!";
+open (REPORTE, ">$outname/$outname\_Report") or die "Couldn't open reportfile $!";
 print REPORTE $report;
 close REPORTE;
 
 print "Cleaning temporary files\n";
-cleanFiles();
+cleanFiles($outname);
 
 print "Done\n";
 print "Have a nice day\n\n";
@@ -209,13 +212,13 @@ exit;
 #######################################################################
 sub specialCluster{
 	my $special_org=shift;
-	my @CLUSTERS=qx/ls $special_org\_*.input/;
+	my @CLUSTERS=qx/ls $outname\/$special_org\_*.input/;
 	my $specialCluster="";
 	my $score=0;
 	foreach my $cluster (@CLUSTERS){
 		chomp $cluster;
 		#print "I will open #$cluster#\n";
-		open (FILE, $cluster) or die "Couldn't open $cluster\n"; 
+		open (FILE, $cluster) or die "Couldn't open $outname/$cluster\n"; 
 		my $firstLine = <FILE>; 
 		chomp $firstLine;
 		close FILE;
@@ -233,23 +236,23 @@ sub specialCluster{
 #__________________________________________________________________________
 sub cleanFiles{
     #    `rm *.lista`;
-        `rm lista.*`;
-        `rm *.input`;
-        if (-e "*.input2"){`rm *.input2`;}
-        `rm *.input2`;
-        `rm Core`;
-        `rm PrincipalHits`;
-        `rm PrincipalHits.muscle`;
-        `rm PrincipalHits.muscle-gb`;
-        `rm PrincipalHits.muscle-gb.htm`;
-        `rm *.order`;
-        `rm Core0`;
-        `rm -r OUTSTAR`;
-        `rm -r MINI`;
-        `rm -r *.stockholm`;
-        `rm -r *.faa`;
-        `rm -r *.blast`;
-        `rm -r *.txt`;
+        `rm $outname/lista.*`;
+        `rm $outname/*.input`;
+        if (-e "$outname/*.input2"){`rm $outname/*.input2`;}
+        `rm $outname/*.input2`;
+        `rm $outname/Core`;
+        `rm $outname/PrincipalHits`;
+        `rm $outname/PrincipalHits.muscle`;
+        `rm $outname/PrincipalHits.muscle-gb`;
+        `rm $outname/PrincipalHits.muscle-gb.htm`;
+        `rm $outname/*.order`;
+        `rm $outname/Core0`;
+        `rm -r $outname/OUTSTAR`;
+        `rm -r $outname/MINI`;
+        `rm -r $outname/*.stockholm`;
+        `rm -r $outname/*.faa`;
+        `rm -r $outname/*.blast`;
+        `rm -r $outname/*.txt`;
         }
 #_____________________________________________________________________________________
 

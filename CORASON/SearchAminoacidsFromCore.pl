@@ -11,14 +11,15 @@ use Cwd;
 my $dir2=&Cwd::cwd(); 
 my $name=pop @{[split m|/|, $dir2]};                       ##Name of the group (Taxa, gender etc)
 my $infile=$name;
-my $outdir="$dir2/$infile";
 my $list=$ARGV[0];
+my $outname=$ARGV[1];
+my $outdir="$dir2/$outname/$infile";
 my $DesiredGenes="Core";
 
 #-----------------------------------------
 
 #print "Seleccionando unicos...\n";
-if (-e $outdir){
+if (-e "$outname/$outdir"){
 	system "rm -r $outdir/FASTAINTER/";
 	system "rm -r $outdir/FASTAINTERporORG/";
 	system "rm lista.ORTHOall";
@@ -36,7 +37,7 @@ system "mkdir $outdir/FASTAINTER/";
 #readMINI($dir2,$listaname);
 
 ### Leer todos los minis
-my %MINIS=ReadFasta($dir2,$list);#INPUT los .bbh OUTPUT=interseccion de todos en  inter.todos
+my %MINIS=ReadFasta($outname,$dir2,$list);#INPUT los .bbh OUTPUT=interseccion de todos en  inter.todos
 
 foreach my $PegId(keys %MINIS){	
 #	print "$PegId\n";
@@ -47,11 +48,11 @@ foreach my $PegId(keys %MINIS){
 ## Hacer un hash con el id de cada gen por ortologia
 ## Imprimir un fasta con esos ids ordenados por ortologos
 ## Imprimir lista Ortho all
-byOrthologues($DesiredGenes,\%MINIS,$outdir,$dir2);
+byOrthologues($outname,$DesiredGenes,\%MINIS,$outdir,$dir2);
 
 ## Hacer Hash con los id de cada gen en el core por organismo
 ## Imprmir Fasta con los ids ordenados por organismo (Cada organismo con todos sus genes en el core
-byOrganism($DesiredGenes,\%MINIS,$outdir,$dir2);
+byOrganism($outname,$DesiredGenes,\%MINIS,$outdir,$dir2);
 print "Done!\n";
 
 
@@ -61,6 +62,7 @@ print "Done!\n";
 
 
 sub ReadFasta{
+	my $outname=shift;
 	my $dir=shift;
 	my $listaname=shift;
 	my %hashFastaH;
@@ -76,7 +78,7 @@ sub ReadFasta{
 	foreach my $mini(@ALL){
 		chomp($mini);
 		####### llena hash con encabezado-secuencia#####
-		open (CU, "$dir/MINI/$mini.faa") or die "Could not open $mini.faa $!\n";
+		open (CU, "$dir/$outname/MINI/$mini.faa") or die "Could not open $dir/$outname/$mini.faa $!\n\n";
 		#print "$dir/MINI/$mini.faa\n";
 		
   		while(<CU>){	
@@ -103,20 +105,21 @@ sub ReadFasta{
 
 #_______________________________________________________________________
 sub byOrthologues{
+	my $outname=shift;
 	my $DesiredGenes=shift;
 	my $refMINIS=shift;
 	my $outdir=shift;
 	my $dir=shift;
 	#my %byOrtho;
 
-	open (ALL, "$dir/$DesiredGenes") or die $!;
+	open (ALL, "$dir/$outname/$DesiredGenes") or die "Couldnt open  $dir/$outname/$DesiredGenes \n$!";
 	my $count=1;
 
  	foreach my $linea(<ALL>){
 
 		open (FASTAINTER, ">$outdir/FASTAINTER/$count.interFastatodos") or die "Couldnt open file $count interFastatodos $!";
   #		print "Writing: $outdir/FASTAINTER/$count.interFastatodo\n";
-		open (LISTA, ">>$outdir/lista.ORTHOall") or die "Lista ortho all $!";
+		open (LISTA, ">>$outdir/lista.ORTHOall") or die "Cant print lista ortho all $!";
 		print LISTA "$count.interFastatodos \n";
 
 		chomp $linea;
@@ -145,11 +148,12 @@ sub byOrthologues{
 #_______________________________________________________________________
 
 sub byOrganism{
+	my $outname=shift;
 	my $DesiredGenes=shift;
 	my $refMINIS=shift;
 	my $outdir=shift;
 	my $dir=shift;
-	open (ALL, "$dir/$DesiredGenes") or die $!;
+	open (ALL, "$dir/$outname/$DesiredGenes") or die "Couldn open $dir/$outname/$DesiredGenes \n$!";
 	my %Orgs;
 	my $count=1;
 

@@ -2,7 +2,10 @@
 use strict;
 use warnings;
 
-my @CLUSTERS=qx/ls *.input/; 	## Read all input Uncomment to read all
+my $outname=$ARGV[0];
+#print "Outname directory is $outname\n";
+my @CLUSTERS=qx/ls $outname\/*.input/; 	## Read all input Uncomment to read all
+
 my $list="";
 my $relevant=0; #number of clusters with more than one coincidence
 my $coincidences=2;
@@ -13,6 +16,7 @@ foreach my $context(@CLUSTERS){
 	chomp $context;
 	my $file=$context;
 	$file=~s/.input//;
+	$file=~s/$outname\///;
 	#print "$context\n";
 	my $column=`cut -f4 $context`;
 	my $firstline=`head -n 1 $context | cut -f7 `;
@@ -31,9 +35,9 @@ foreach my $context(@CLUSTERS){
 		}
 	else {	
 		#print "Voy a remover $file\n";
-		if (-e "$file.input"){`rm $file.input`;		}
-		if (-e "$file.input2"){`rm $file.input2`;}
-		if (-e "MINI/$file.faa"){`rm MINI/$file.faa`;}
+		if (-e "$outname/$file.input"){`rm $outname/$file.input`;		}
+		if (-e "$outname/$file.input2"){`rm $outname/$file.input2`;}
+		if (-e "$outname/MINI/$file.faa"){`rm $outname/MINI/$file.faa`;}
 		}
 	#print "#################\n";
 	}

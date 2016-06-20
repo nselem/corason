@@ -14,7 +14,7 @@ use Term::ANSIColor;
 # This script will help you to find a core between Clusters and sort them accordingly
 # Author Nelly Selem nselem84@gmail.com 2016
 #	
-#	B<CORASON.pl> -rast_ids rastIds -q query [-hv] [-s special_org] [-e_value query_evalue] [-c number_of_genes_on_cluster] [-b bit_score] [-e_cluster cluster_e_value] [-e_core core_e_value] [-l genome_selected] [-rescale number]
+#	$ corason.pl -rast_ids rastIds -q query -s special_org [-hv] [-e_value query_evalue] [-c number_of_genes_on_cluster] [-b bit_score] [-e_cluster cluster_e_value] [-e_core core_e_value] [-l genome_selected] [-rescale number]
 
 =head1 NAME
 
@@ -22,7 +22,7 @@ Corason - pass your inputs trough the command line!
 
 =head1 SYNOPSIS
 
-CORASON extense manual can be consulted at:
+CORASON extense manual can be consulted at: https://github.com/nselem/EvoDivMet/wiki/Detailed-Tutorial/
 
   --rast_ids  		Required (No Default)	RAST ids tab-separated table. From Rast: Job id\tGenome id\tOrganism name.
 
@@ -32,23 +32,25 @@ CORASON extense manual can be consulted at:
 
   --e_value           	Default: 1E-15 (float)  E value. Minimal for a gene to be considered a hit.
 
-  --bitscore,-b       	Default: 0 (Positive integer) Revisar el archivo .BLAST.pre para tener idea de este parámetro.
+  --bitscore,-b       	Default: 0 (Positive integer) After one run look into file .BLAST.pre to be more restrictive on hits.
 
-  --cluster_radio -c  	Default: 10 (Positive integer) Number of genes in the neighborhood to be analized.
+  --cluster_radio -c  	Default: 10 (Positive integer) Number of genes in the neighborhood to analize.
 
   --e_cluster 	      	Default: 1E-3 (float)  e-value for sequences from reference cluster, values above it will be colored. 
 
   --e_core 	      	Default: 1E-3 (float) e-value for Best Bidirectional Hits used to cunstruct genomic core from clusters.
 
-  --list 	      	Default: GENOME/*.faa (string "," or ":" separated: Example 1,2,4:6 will produce search on genomes 1,2,4,5,6)
-			Wich genomes would you like process. Not passing this option will conduce to use all genomes on GENOME dir.
+  --list 	      	Default: GENOME/*.faa (string separated by "," or ":". 
+			Example 1,2,4:6 produce a search on genomes 1,2,4,5,6)
+			Leaving this option empty will conduce to search on all genomes in GENOME directory.
 
   --rescale,r         	Default: 85000 (integer) Increasing this number will show a bigger cluster region with smaller genes.
  
-  --verbose,v           If you would like to read more output from scripts. Mostly only useful if you would kike to debug some script.
+  --verbose,v           If you would like to read more output from scripts. 
+			Most of the time only useful if you would like script debugging.
 
 Remarks:
-For float values (as e_value, e_core etc) 0.001 will work but .001 won't do it.
+For float values (as e_value, e_core etc) 0.001 will work, but .001 won't do it.
 
 
 =head1 VERSION
@@ -94,9 +96,16 @@ GetOptions(
        ) or HelpMessage(1);
 
 #######################3 end get options ###############################################3
+print color('bold blue');
 
-HelpMessage(1) unless ($queries and $rast_ids and $special_org);
+print "\n$0 requires the rast_ids argument (--rast_ids\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $rast_ids;  ## A genome list is mandatory
 
+print "\n$0 requires the queries argument (--q\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $queries;  ## A genome list is mandatory
+
+print "\n$0 requires the special_org argument (--s\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki at:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $special_org;  ## A genome list is mandatory
+
+
+#HelpMessage(1) unless ($queries and $rast_ids and $special_org);
 ############################################################################################
 #############################################################################################
 ##############################   Main  ######################################################
@@ -202,7 +211,7 @@ sub get_lista{
 	my $bool=1;
 	my @all;
 
-	if ($list=""){ 
+	if ($list eq ""){ 
 		print "All genomes would be procesed\n";
 		if (-e $rast_ids){
 			@all=`cut -f1 $rast_ids`;

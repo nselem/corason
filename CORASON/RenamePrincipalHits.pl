@@ -3,12 +3,13 @@ use strict;
 use warnings;
 
 #Renombrar arbol
-my $file=$ARGV[0];
-my $RAST_IDs=$ARGV[1];
-`rm $file.txt`;
-open (NAMES,"$RAST_IDs") or die "Couldn't open NAMES file $!";
-open (SEQUENCE,"$file.muscle-gb") or die "Couldn't open $file.muscle-gb file $!";
-open (BAYES,">>RightNames$file.txt") or die "Couldn't open RightNames$file.txt file $!";
+my $file=$ARGV[1];
+my $outname=$ARGV[0];
+my $RAST_IDs=$ARGV[2];
+if (-e "$outname/$file.txt"){`rm $outname/$file.txt`;}
+open (NAMES,"$RAST_IDs") or die "Couldn't open NAMES file $RAST_IDs $!";
+open (SEQUENCE,"$outname/$file.muscle-gb") or die "Couldn't open $outname/$file.muscle-gb file $!";
+open (BAYES,">>$outname/RightNames$file.txt") or die "Couldn't open $outname/RightNames$file.txt file $!";
 
 my %SEQUENCES;
 my %NAMES;
@@ -31,7 +32,7 @@ foreach my $line (<NAMES>){
 #	$count++;
 	my $jobId=$st[0];
 	my $name=$st[2];
-	$name=~s/[)(,.-]=/_/g;
+	$name=~s/[\[\)\(\,\.\-\]\=]/_/g;
 	$name=~s/\s/_/g;	
 	$name=~s/__/_/g;
 	$refNAMES->{$jobId}=$name;

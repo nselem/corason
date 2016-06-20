@@ -17,6 +17,7 @@ use Cwd;
 #print "ARG 1 $ARGV[1]\n";
 my $rescale=$ARGV[0]; 		## Arrow horizontal size, greater values of this parameter would allow to observe more genes
 my @CLUSTERS=split(',',$ARGV[1]); 	## Read all input Uncomment to read all
+my $outname=$ARGV[2];
 my $nClust=scalar @CLUSTERS; 	#number of cluster (until now one per organism)
 				#3 Used to draw lines
 my $w=800;  			## Size of the window
@@ -48,30 +49,31 @@ my $tag = $svg->script(-type=>"text/ecmascript");
 #########################################################
 ######## Main 
 
-Draw(\@CLUSTERS,$s,$t,$tv,$w,$cutleft,$grueso,\%ColorNames, $rescale); 
+Draw($outname,\@CLUSTERS,$s,$t,$tv,$w,$cutleft,$grueso,\%ColorNames, $rescale); 
 	#Draw(\@CLUSTERS,$s,$t,$tv,$w,$cutleft,$grueso,\%ColorNames); 
 #_________________________________________________________________
 
 #####################################################################
 ##Html output (Sending files to firefox
 #####################################################################
-open (OUT, ">Contextos.svg") or die $!;
+open (OUT, ">$outname/Contextos.svg") or die "Couldn't open $outname/Contextos.svg \n$!";
     # now render the SVG object, implicitly use svg namespace
 print OUT $svg->xmlify;
 close OUT;
 	#system "firefox $file.svg";
-`perl -p -i -e 's/&//' Contextos.svg`;
-`perl -p -i -e 'if(/\<polygon/)\{s/title=\"/\>\n\<title\>/g;if(m{\/\>\$})\{s{\" \/\>}{\<\/title\>\<\/polygon\>};\}\}else\{if((!/^\t/) and m{\/\>})\{s{\" \/>}{<\/title><\/polygon>};\}\}' Contextos.svg`;
+`perl -p -i -e 's/&//' $outname/Contextos.svg`;
+`perl -p -i -e 'if(/\<polygon/)\{s/title=\"/\>\n\<title\>/g;if(m{\/\>\$})\{s{\" \/\>}{\<\/title\>\<\/polygon\>};\}\}else\{if((!/^\t/) and m{\/\>})\{s{\" \/>}{<\/title><\/polygon>};\}\}' $outname/Contextos.svg`;
 
 
 ##################################################################
 ###    subs ######################################################
 ##################################################################
 sub Draw{
+	my $outname=shift;
 	my ($refCLUSTERS,$s,$t,$tv,$w,$cutleft,$grueso,$refColorNames,$rescale)=@_;
 	my @YCOORD;
 	my %CONTEXTS;
-	%CONTEXTS=ReadContexts(@{$refCLUSTERS});
+	%CONTEXTS=ReadContexts($outname,@{$refCLUSTERS});
 	my $size=scalar (keys %CONTEXTS);
 	##In one svg object I have accumulated all clusters
 	##May be for the function visualization we may use more than one
@@ -211,6 +213,7 @@ sub line{
 	}
 #______________________________________________________________________________________________
 sub ReadContexts{  ###Here we read all the .input files
+	my $outname=shift;
 	my @CLUSTERS=@_;
 	my %CONTEXTS;
 
@@ -220,7 +223,7 @@ sub ReadContexts{  ###Here we read all the .input files
 		$key=~s/\.input//;
 		if($verbose){print "Key $key Context: $context \n";}
 
-		open(FILE,$context) or die "Could not open file $context $!";	
+		open(FILE,"$outname/$context") or die "Could not open file $outname/$context $!";	
 		##For each genome a Hash of array HAsh keys:functions Array Contents: gene with that function
 		#my $count=0;
 		$CONTEXTS{$key}=[];
@@ -303,7 +306,7 @@ foreach my $context(@CLUSTERS){
 		##	side	$svg->text( x  => 10+$t+$w, y  => $refYCOORD->[$cont_number-1]+$tv)->cdata("$orgName ;"); }
 			my @sp=split(/\./,$refCONTEXTS->{$key}[6]);
 			my $gen=$sp[-1];
-			$svg->text( x  => 10+$t, y  => $refYCOORD->[$cont_number-1]+$tv-20)->cdata("Genoma $key:$orgName    Gen:$gen"); 
+			$svg->text( x  => 10+$t, y  => $refYCOORD->[$cont_number-1]+$tv-20)->cdata("Genome $key:$orgName    Gen:$gen"); 
 			} ##up right;
 		####################################################################
 

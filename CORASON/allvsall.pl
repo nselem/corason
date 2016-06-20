@@ -35,16 +35,18 @@ sub SelecGroup();
 my $verbose;
 my $inputblast;
 my $output;
+my $outname;
  
 my %BH = (); #Hash de hashes
 my %BiBestHits;
-my @Required=Options(\$verbose,\$inputblast,\$output);
+my @Required=Options(\$verbose,\$inputblast,\$output,\$outname);
 #################################################################################################
 ########################################################
 ## Main
 ## 1 Find Best Hits
 #print "\nFinding Hits for each gene, takes some minutes, be patient!\n"; 
-&bestHit(\%BH,$inputblast);
+
+&bestHit($outname,\%BH,$inputblast);
 
 foreach my $peg (keys %BH){
 #print " Peg: $peg\n";
@@ -62,7 +64,7 @@ print "Now finding Best Bidirectional Hits List\n";
 
 ## 3 Find ortho groups of selected Genomes
 print ("Selecting List that contains orthologs from all desired genomes\n");
-&SelecGroup(\%BiBestHits,@Required);
+&SelecGroup($outname,\%BiBestHits,@Required);
 
 ##############################################################################
 ##################### Subs implementation
@@ -70,7 +72,12 @@ print ("Selecting List that contains orthologs from all desired genomes\n");
 sub Options{ 
 	my $Req; ## Genoms list to look for otrho groups
 
-	GetOptions ("In=s" => \$inputblast,"Out=s" => \$output,"Req=s" => \$Req,"verbose" => \$verbose) or die("Error in command line arguments\n");
+	GetOptions (	"In=s" => \$inputblast,
+			"Out=s" => \$output,
+			"Req=s" => \$Req,	
+			"verbose" => \$verbose, 
+			"outname=s"=>\$outname)
+				or die("Error in command line arguments\n");
 	if(!$inputblast) {
 		die("Please provide an all vs all blast file");
 		} 
@@ -96,9 +103,10 @@ sub Options{
 #__________________________________________________________________________________________________
 #__________________________________________________________________________________________________
 sub bestHit(){
+	my $outname=shift;
 	my $BH=shift;
 	my $input=shift;
-	open(FILE, $input);
+	open(FILE, "$outname/$input") or die "Couldnt open $outname/$input file \n$!";
 
 	foreach my $line(<FILE>) {
 		my @sp = split(/\t/, $line);
@@ -159,8 +167,9 @@ sub ListBidirectionalBestHits(){
 #__________________________________________________________________________________________________
 
 sub SelecGroup(){
+	my $outname=shift;
 	my $refBBH=shift;
-	open (OUT,">./OUTSTAR/$output");
+	open (OUT,">$outname/OUTSTAR/$output");
 	#my $refRequired=shift;
 	for my $gen (keys %$refBBH){
 		my $oo1 = '';

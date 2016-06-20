@@ -7,17 +7,19 @@ use warnings;
 
 my $genome_dir="MINI";
 my $lista=$ARGV[0];
+my $outname=$ARGV[1];
 my $outfile="Concatenados.faa";
 
-Concatenar($lista,$genome_dir,$outfile);
+Concatenar($outname,$lista,$genome_dir,$outfile);
 
 sub Concatenar{
+	my $outname=shift;
         my $list=shift;
         my $genome_dir=shift;
         my $outfile=shift;
 
 	my @ALL=split(",",$list);
-        open(OUT, ">$genome_dir/$outfile") or die "Couldn't open file $genome_dir/$outfile $!\n";
+        open(OUT, ">$outname/$genome_dir/$outfile") or die "Couldn't open file $outname/$genome_dir/$outfile $!\n";
 
         foreach my $HitId(@ALL){
                 chomp $HitId;
@@ -26,7 +28,7 @@ sub Concatenar{
                 #print "JobId = #$ids[0]# Name =$ids[2]\n";
 
 
-                open(EACH, "$genome_dir/$HitId.faa") or die "$genome_dir/$HitId.faa does not exists $!";
+                open(EACH, "$outname/$genome_dir/$HitId.faa") or die "$outname/$genome_dir/$HitId.faa does not exists $!";
 
 
                 while(my $line2=<EACH>){

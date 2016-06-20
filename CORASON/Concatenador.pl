@@ -54,6 +54,8 @@ my @files;   ######### Arreglo que contendrá los archivos del directorio que te
 my $dir2=&Cwd::cwd();
 my $name=pop @{[split m|/|, $dir2]};                       ##Name of the group (Taxa, gender etc)
 my $infile="$name";
+my $outname=$ARGV[0];
+$dir2=$dir2."/".$outname;
 my $outdir="$dir2/$infile";
 my $directory =  "$dir2/$infile/CONCATENADOS";
 
@@ -65,7 +67,7 @@ my $directory =  "$dir2/$infile/CONCATENADOS";
 %HASH=CreateHash($verbose,@keys);     ####### Crea un HAsh que contendra las secuencias concatenadas
 @files=GetFileNames($verbose,$directory);   #####Abre el directorio y obtiene el nombre de todos los archivos a concatenar
 concatenar($verbose,$directory,\@keys,\@files,\%HASH); 	##### Concatena en el hash las secuencias correspondientes (una por cada archivo)
-EscribiendoSalida($outputfile,\@keys,\%HASH);  ## Escribe el hash concatenado en un archivo de salida
+EscribiendoSalida($outname,$outputfile,\@keys,\%HASH);  ## Escribe el hash concatenado en un archivo de salida
 ##################################################################
 ####################################################################
 
@@ -227,11 +229,12 @@ sub EscribiendoSalida{  #######Necesita a HASH lleno
 ########## finalmente imprimo archivo de salida
 
 ###### Creo un archivo salida
+	my $outname=shift;
 	my $outputfile=shift;
 	my $refkeys=shift;
 	my $refHASH=shift;
 
-	my $EscribirSalida="SalidaConcatenada.txt";
+	my $EscribirSalida="$outname/SalidaConcatenada.txt";
 	if($outputfile){$EscribirSalida=$outputfile;}
 	open(OUTFILE,">$EscribirSalida");
 

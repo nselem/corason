@@ -52,6 +52,8 @@ my @files;
 my $dir=&Cwd::cwd();
 my $name=pop @{[split m|/|, $dir]};                       ##Name of the group (Taxa, gender etc)
 my $infile=$name;
+my $outname=$ARGV[0];
+$dir=$dir."/".$outname;
 
 my $directory = "$dir/$infile/ALIGNMENTS_GB"; 
 print "directory $directory will be open\n";
