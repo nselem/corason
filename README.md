@@ -1,18 +1,23 @@
 # EvoDivMet
 Bioinformatic Tools for studying evolution of metabolic diversity
+Tools:  
+- EvoMining  
+- CORASON  
 
 ## CORASON
 
 ### CORe Analysis of Syntenic Orthologs for priorize Natural Product-Biosynthetic Gene Cluster
-CORASON searchs for gene clusters   
-Input: query gen and RAST genome database.  
-Output: SVG graph with clusters sorted according to core genomic tree from clusters.  
+CORASON is a visual tool that searchs for gene clusters similar to a given one. If exists a genomic core on clusters CORASON finds it and sort clusters phylogenetically according to its core.  
 
-CORASON was developed to find biosynthetic gene clusters, but it can used for any kind of clusters.
+**Input:** query gen and RAST genome database.  
+**Output:** SVG graph with clusters sorted according to core genomic tree from clusters.  
+
+CORASON was developed to find and prioritize biosynthetic gene clusters, but can be used for any kind of clusters.  
 
 ####Advantages
-SVG
-Docker Reproducibility.  
+-SVG graphs. Scalable graphs that allow metadata to be displayed easily.
+-Interactive. CORASON is not an static database, it allows you to explore your own genomes.  
+-Reproducibility. CORASON runs on docker, that allows to perform the same analysis even if you change your local perl/blast/muscle/Gblocks/quicktree versions.
 
 ## CORASON Installation guide
 
