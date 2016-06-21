@@ -6,7 +6,7 @@ Tools:
 
 ## CORASON
 
-### CORe Analysis of Syntenic Orthologs for priorize Natural Product-Biosynthetic Gene Cluster
+### CORe Analysis of Syntenic Orthologs to prioritize Natural Product-Biosynthetic Gene Cluster
 CORASON is a visual tool that searchs for gene clusters similar to a given one. If exists a genomic core on clusters CORASON finds it and sort clusters phylogenetically according to its core.  
 
 **Input:** query gen and RAST genome database.  
