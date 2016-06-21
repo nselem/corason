@@ -15,9 +15,9 @@ CORASON is a visual tool that searchs for gene clusters similar to a given one, 
 CORASON was developed to find and prioritize biosynthetic gene clusters, but can be used for any kind of clusters.  
 
 ####Advantages
--SVG graphs. Scalable graphs that allow metadata to be displayed easily.
--Interactive. CORASON is not an static database, it allows you to explore your own genomes.  
--Reproducibility. CORASON runs on docker, that allows to perform the same analysis even if you change your local perl/blast/muscle/Gblocks/quicktree versions.
+-**SVG graphs** Scalable graphs that allow metadata to be displayed easily.  
+-**Interactive** CORASON is not an static database, it allows you to explore your own genomes.  
+-**Reproducibility** CORASON runs on docker, that allows to perform the same analysis even if you change your local perl/blast/muscle/Gblocks/quicktree versions.
 
 ## CORASON Installation guide
 
