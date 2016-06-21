@@ -17,7 +17,7 @@ CORASON was developed to find and prioritize biosynthetic gene clusters, but can
 ####Advantages
 -**SVG graphs** Scalable graphs that allows metadata easy display.  
 -**Interactive** CORASON is not an static database, it allows you to explore your own genomes.  
--**Reproducibility** CORASON runs on docker, that allows to perform the same analysis even if you change your local perl/blast/muscle/Gblocks/quicktree versions.  
+-**Reproducibility** CORASON runs on docker, that allows to always conduce the same analysis even if you change your Linux/perl/blast/muscle/Gblocks/quicktree distributions.  
 
 ## CORASON Installation guide
 
