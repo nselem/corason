@@ -71,7 +71,7 @@ Use absolute paths, if you don’t know the path to your dir, place yourself on 
 ### 2.3 Run CORASON inside your docker  
 
 `$ corason.pl -q DesC.query -rast_ids RAST_CORASON -s 242137`
-once you finished all your queries exit the container
+once you finished all your queries exit the container  
 `$ exit`  
 ### 2.4 Read your results ! 
 Outputs will be on the new folder /mypath/mydir/query   
