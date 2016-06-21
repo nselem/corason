@@ -102,8 +102,8 @@ print "Analising cluster with hits according to the query sequence\n\n";
 	my $NumClust= `ls $outname/*.input2|wc -l`;
 	chomp $NumClust;
 	#$NumClust=~s/\r//;
-	print "There are $NumClust organisms with similar clusters\n"; 
-	$report=$report. "\n\nThere are $NumClust organisms with similar clustersi\n"; 
+	print "There are $NumClust similar clusters\n"; 
+	$report=$report. "\n\nThere are $NumClust similar clusters\n"; 
 #__________________________________________________________________________________________________________
 print "Creating query hits tree, without considering the core-clusters\n";
 	`cat $outname/*.input2> $outname/PrincipalHits`;
@@ -142,7 +142,7 @@ if ($boolCore>1){
 	# Abrimos los input files de ese organismo y tomamos el de mejor score	
 	my $specialCluster=specialCluster($special_org);
 	print "Best cluster $specialCluster\n";
-       	my $functions=`cut -f1,2 $outname/$name/FUNCTION/$specialCluster.core.function `;
+       	my $functions=`cut -f1,2 $outname/FUNCTION/$specialCluster.core.function `;
 #       	print "cut -f1,2 $name/FUNCTION/$specialCluster.core.function ";
 #	print "Function $functions#\n";
 	$report=$report."\n".$functions;

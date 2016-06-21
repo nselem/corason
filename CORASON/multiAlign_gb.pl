@@ -18,12 +18,12 @@ my $Working_dir="$dir2/$infile";
 if (-e "$dir2/$infile/ALIGNMENTS_GB/") {system "rm -r $dir2/$infile/ALIGNMENTS_GB/";}
 system "mkdir $dir2/$infile/ALIGNMENTS_GB/";
 
-#my $TOTAL=`wc -l < $dir2/$infile/lista.ORTHOall`;
+my $TOTAL=`wc -l < $dir2/$infile/lista.ORTHOall`;
 
 my @lista0=split(",",$list); ## MINI genomes list
 my @sorted_clust = sort @lista0; ## Sorted MINI genomes list
 
-for(my $gen=1;$gen<=$NUM2;$gen++){
+for(my $gen=1;$gen<=$TOTAL;$gen++){
 	print "&align $gen,$NUM2,$Working_dir,@sorted_clust";  ## Each gene will be aligned
 	&align($gen,$NUM2,$Working_dir,@sorted_clust);  ## Each gene will be aligned
 	}
