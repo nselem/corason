@@ -80,7 +80,7 @@ Outputs will be on the new folder /mypath/mydir/query
 - *.tre Phylogenetic tree of the genomic cluster core.
 
 ![Results.png](https://github.com/nselem/EvoDivMet/blob/master/IMAGES/Results.png)  
-On this example query file was DesC.query and input directory was /home/mydir then output files are located on /home/mydir/DesC.  
+On this example query file was DesC.query and input directory was /home/mydir then output files are located on   /home/mydir/DesC.  
 ### Links  
 Code and docker file located at:  
 [Code] (https://github.com/nselem/EvoDivMet  )  
