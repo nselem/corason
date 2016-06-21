@@ -70,7 +70,7 @@ Use absolute paths, if you don’t know the path to your dir, place yourself on 
 
 ### 2.3 Run CORASON inside your docker  
 
-`$ corason.pl -q 1308.query -rast_ids RAST.IDs -s 326020`
+`$ corason.pl -q DesC.query -rast_ids RAST_CORASON -s 242137`
 once you finished all your queries exit the container
 `$ exit`  
 ### 2.4 Read your results ! 
@@ -80,7 +80,7 @@ Outputs will be on the new folder /mypath/mydir/query
 - *.tre Phylogenetic tree of the genomic cluster core.
 
 ![Results.png](https://github.com/nselem/EvoDivMet/blob/master/IMAGES/Results.png)
-On this example query file was AroA.query and input directory was /home/mydir then output files are located on /home/mydir/AroA.  
+On this example query file was DesC.query and input directory was /home/mydir then output files are located on /home/mydir/DesC.  
 ### Links  
 Code and docker file located at:  
 [Code] (https://github.com/nselem/EvoDivMet  )  
