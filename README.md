@@ -53,7 +53,7 @@ Test your docker engine with the command:
 Create an empty directory that contains your [[Input Files]]: RAST-genome data base, Rast_Ids file and file.query  
 `$ mkdir mydir`  
 place inside my dir your files:  
-![mydir.png](https://github.com/nselem/EvoDivMet/blob/master/IMAGES/mydir.png)  
+![mydir.png](https://github.com/nselem/EvoDivMet/blob/master/IMAGES/mydir3.png)  
 GENOMES    (dir)  
 RAST_IDs   (tab separated file)  
 file.query (aminoacid fasta file) Save as many queries as you wish to process.  
@@ -79,7 +79,7 @@ Outputs will be on the new folder /mypath/mydir/query
 - query_Report   Functional cluster genomic core report.
 - *.tre Phylogenetic tree of the genomic cluster core.
 
-![Results.png](https://github.com/nselem/EvoDivMet/blob/master/IMAGES/Results.png)  
+![Results.png](https://github.com/nselem/EvoDivMet/blob/master/IMAGES/yourquery2.png)  
 On this example query file was DesC.query and input directory was /home/mydir, output files are located on /home/mydir/DesC  
 ### Links  
 Code and docker file located at:  
