@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use Cwd;
 use Getopt::Long 'HelpMessage';
-
+no warnings 'experimental::smartmatch';
 ######################################################################
 ###This is the main script to run the ortho-group tools
 ######################################################################
@@ -86,7 +86,7 @@ my $NUM = `wc -l < $rast_ids`;
 		system("1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type  prots -makedb ");
                 }
         else {
-                print "Searching on clusters in reduced list: $lista\n";        
+                print "\nSearching on clusters in reduced list: $lista\n";        
 		system("1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type prots -makedb");
                }
 	print "Sequences search finished\n\n";
@@ -125,7 +125,11 @@ print "Creating query hits tree, without considering the core-clusters\n";
 	my $INPUTS=""; ## Orgs sorted according to a tree (Will be used on the Context draw)
 	my $orderFile="$outname/PrincipalHits.order";
 #______________________________________________________________________________________________________________
+
 	print "Searching genetic core on selected clusters\n";
+	print"2_OrthoGroups.pl -e_core $e_core -list $lista -num $num -rast_ids $rast_ids -outname $outname\n";
+	#print "Enter to continue\n";
+	#my $pause=<STDIN>;
 	system("2_OrthoGroups.pl -e_core $e_core -list $lista -num $num -rast_ids $rast_ids -outname $outname");
 	print "Core finished!\n\n";
 	my $boolCore= `wc -l $outname/Core`;
@@ -171,13 +175,13 @@ if ($boolCore>1){
 	system "nw_labels -I $outname/$outname\_BGC.tre>$outname/$outname\_BGC_TREE.order";
 
  	$orderFile="$outname/$outname\_BGC_TREE.order";
-	print "I will draw with concatenated tree order\n";
+	print "I will draw SVG clusters with concatenated tree order\n";
 	$INPUTS=getDrawInputs($orderFile);
 	}
 	else{  ### If there is no core, then sort according to principal hits
 		$report=$report. "The only gen on common on every cluster is the main hit\n";
 		if (-e $orderFile){
-			print "I will draw with the single hits order\n";
+			print "I will draw SVG clusters with the single hits order\n";
 			$report=$report. "I will draw with the single hits order\n";
 			$INPUTS=getDrawInputs($orderFile);
         		}

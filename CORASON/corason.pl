@@ -212,7 +212,7 @@ sub get_lista{
 	my @all;
 
 	if ($list eq ""){ 
-		print "All genomes would be procesed\n";
+		print "\nAll genomes would be procesed\n";
 		if (-e $rast_ids){
 			@all=`cut -f1 $rast_ids`;
 			for my $genome (@all){chomp $genome;}

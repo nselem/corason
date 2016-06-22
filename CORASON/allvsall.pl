@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 use Getopt::Long;
+no warnings 'experimental::smartmatch';
 
 ####################################################################################################
 # This program produces lists of orthogroups

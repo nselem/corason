@@ -58,14 +58,17 @@ print "I will run allvsall with blast $outname/$BLAST2\n";
 system(" allvsall.pl -R $lista -v 0 -i $BLAST2 -outname $outname");
 #`perl allvsall.pl -R 8,12,57,58,59,60,61,248,261,262,273,275,277,282,310 -v 0 -i ClusterTools1.blast`;
 
-#print "before Star\nnum $num\nlist $lista\n";
-Star($outname,$num,$lista);
+print "Starting Star groups \n num $num\n list $lista\n";
+my $corebool=Star($outname,$num,$lista);
 
-#print "SearchAminoacidsFromCore.pl $lista $outname\n";
+if($corebool != 0){
+print "SearchAminoacidsFromCore.pl $lista $outname\n";
 system("SearchAminoacidsFromCore.pl $lista $outname");
 
+print "ReadReaction $lista $num $outname\n";
 system("ReadReaccion.pl $lista $num $outname");
-
+}
+else { print "There is no star-core on this clusters\n";}
 ######################################################################
 ######################################################################
 ###   Sub  Rutinas (llamadas a los distintos pasos del script
@@ -190,17 +193,19 @@ sub Star{
 
 	  system("cut -f2-$COLS $outname/OUTSTAR/Out.Ortho | sort | uniq -c |  awk '\$1>$MIN' >$outname/Core0");
 
-
+	my $corebool=0;
 	open (CORE0,"<","$outname/Core0") or die "Could not open the file $outname/Core0:$!";
 	open (CORE,">","$outname/Core") or die "Could not open the file $outname/Core:$!";
 
 	for my $line (<CORE0>){
 		$line=~s/\s*\d*\s*//;
 		print CORE $line;
+		$corebool=$corebool+1;
 		}
 	close CORE0;
 	close CORE;
 #	`rm Core0`;
+	return $corebool;
 
 }
 

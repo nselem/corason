@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 use Cwd;
+no warnings 'experimental::smartmatch';
 
 #####################################
 #REQUERIMIENTOS:

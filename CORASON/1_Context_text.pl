@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use Getopt::Long 'HelpMessage';
 use Cwd;
+no warnings 'experimental::smartmatch';
 
 =head1 NAME
 
