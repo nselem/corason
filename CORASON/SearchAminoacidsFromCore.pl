@@ -22,7 +22,7 @@ my $DesiredGenes="Core";
 if (-e "$outname/$outdir"){
 	system "rm -r $outdir/FASTAINTER/";
 	system "rm -r $outdir/FASTAINTERporORG/";
-	system "rm lista.ORTHOall";
+	system "rm $outdir/lista.ORTHOall";
 	system "rm -r $outdir";
 	}
 
