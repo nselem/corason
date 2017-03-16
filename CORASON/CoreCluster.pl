@@ -77,6 +77,8 @@ my $report="";
 if (-e "$outname/$outname\_Report"){`rm $outname/$outname\_Report`;}
 $report=$report."Queries $queries\tSpecial Organism $special_org\te_value $e_value\tbitscore $bitscore\tcluster radio $cluster_radio\te_core $e_core\trescale $rescale\tlist $lista\tnumber $num\tname folder $name\tdir $dir\tblast $blast\t";
 
+my $INPUTS="";
+my $orderFile="";
 
 #_________  Query blast ________________________________________________________________________________
 	print "\nSearching sequences from query (1_Context_text.pl)\n";
@@ -122,8 +124,8 @@ print "Creating query hits tree, without considering the core-clusters\n";
 	system "mv $outname/PrincipalHits_TREE.tre $outname/$outname\_PrincipalHits.tre";
 
 	system "nw_labels -I $outname/$outname\_PrincipalHits.tre>$outname/PrincipalHits.order";
-	my $INPUTS=""; ## Orgs sorted according to a tree (Will be used on the Context draw)
-	my $orderFile="$outname/PrincipalHits.order";
+	#my $INPUTS=""; ## Orgs sorted according to a tree (Will be used on the Context draw)
+	$orderFile="$outname/PrincipalHits.order";
 #______________________________________________________________________________________________________________
 
 	print "Searching genetic core on selected clusters\n";
@@ -178,22 +180,32 @@ if ($boolCore>1){
 	print "I will draw SVG clusters with concatenated tree order\n";
 	$INPUTS=getDrawInputs($orderFile);
 	}
-	else{  ### If there is no core, then sort according to principal hits
+else {if(-s $orderFile){ 
+		 ### If there is no core, then sort according to principal hits
 		$report=$report. "The only gen on common on every cluster is the main hit\n";
-		if (-e $orderFile){
-			print "I will draw SVG clusters with the single hits order\n";
-			$report=$report. "I will draw with the single hits order\n";
-			$INPUTS=getDrawInputs($orderFile);
-        		}
+		print "I will draw SVG clusters with the single hits order\n";
+		$report=$report. "I will draw with the single hits order\n";
+		$INPUTS=getDrawInputs($orderFile);
 		my $line =`perl -ne \'print if \$\. == 2\' $outname/PrincipalHits `;
  		my $len = map $_, $line =~ /(.)/gs;
 		$len--;
 		$report=$report."\nAminoacid array size = $len \n\n";
-        	}
+	}
+  		}        	
+
+if(!-s $orderFile){
+		print "$outname outname \n\n";
+		 ### If there is no core, then sort according to principal hits
+		$report=$report. "Sequences did not align. nevertheless you can still see homologous clusters\n";
+		print "Sequences didnt align, I will draw SVG clusters with the single hits blast order\n";
+		$report=$report. "I will sort draws with the single hits blast order\n";
+		$INPUTS=blast_sort($outname);
+
+}
 #_____________________________________________________________________________________________
 
-print "Now SVG file will be generated with inputs: $INPUTS\n\n";
-#	print "3_Draw.pl $rescale $INPUTS $outname";
+#print "Now SVG file will be generated with Rescale $rescale outname $outname inputs: $INPUTS\n\n";
+	print "3_Draw.pl $rescale $INPUTS $outname\n";
 	system("3_Draw.pl $rescale $INPUTS $outname");
 
 print "SVG  file generated\n\n";
@@ -203,6 +215,7 @@ open (REPORTE, ">$outname/$outname\_Report") or die "Couldn't open reportfile $!
 print REPORTE $report;
 close REPORTE;
 
+exit;
 print "Cleaning temporary files\n";
 cleanFiles($outname);
 
@@ -214,6 +227,41 @@ exit;
 ###   Sub  Rutinas (llamadas a los distintos pasos del script
 #######################################################################
 #######################################################################
+
+
+sub blast_sort{
+        my $name=shift;
+        my %PRE_SORTED;
+        my @CLUSTERS=qx/ls $name\/*.input/;
+        foreach my $id(@CLUSTERS){
+                chomp $id;
+#                print "Id on blast sort $id\n";
+#                print "entre to continue \n";
+#                my $pause=<STDIN>;
+                my @st=split(/[\/_\.]/,$id);
+             #   print "0 $st[0] 1:$st[1], 2:$st[2],3$st[3]\n";
+                my $newId="peg.".$st[2]."|".$st[1];
+#                system (" echo grep '$newId' $name/$name.BLAST");
+                my $num = `grep -n -m1 '$newId' $name/$name.BLAST|cut -d':' -f1`;
+                chomp $num;
+                if($num){
+                        $id=~s/$name\///;
+                        $PRE_SORTED{$num}=$id;
+#                       print"Id $id -> $num\n";
+                }
+        }
+        my $INPUTS;
+        foreach my $num(sort{$a<=>$b} keys %PRE_SORTED) {
+                $INPUTS=$INPUTS.$PRE_SORTED{$num}.",";
+#                print "$num -> $PRE_SORTED{$num}\n";
+        }
+
+#print "####################################3\n#";
+ chop $INPUTS;
+#print "INPUTS= $INPUTS\n";
+return $INPUTS;
+}
+#--------------------------------------------------------------------
 sub specialCluster{
 	my $special_org=shift;
 	my @CLUSTERS=qx/ls $outname\/$special_org\_*.input/;
@@ -241,15 +289,15 @@ sub specialCluster{
 sub cleanFiles{
     #    `rm *.lista`;
         `rm $outname/lista.*`;
-        `rm $outname/*.input`;
+#        `rm $outname/*.input`;
         if (-e "$outname/*.input2"){`rm $outname/*.input2`;}
-        `rm $outname/*.input2`;
+#        `rm $outname/*.input2`;
         `rm $outname/Core`;
-        `rm $outname/PrincipalHits`;
-        `rm $outname/PrincipalHits.muscle`;
-        `rm $outname/PrincipalHits.muscle-gb`;
-        `rm $outname/PrincipalHits.muscle-gb.htm`;
-        `rm $outname/*.order`;
+#        `rm $outname/PrincipalHits`;
+#        `rm $outname/PrincipalHits.muscle`;
+#        `rm $outname/PrincipalHits.muscle-gb`;
+#        `rm $outname/PrincipalHits.muscle-gb.htm`;
+#        `rm $outname/*.order`;
         `rm $outname/Core0`;
         `rm -r $outname/OUTSTAR`;
         `rm -r $outname/MINI`;

@@ -48,7 +48,10 @@ my $tag = $svg->script(-type=>"text/ecmascript");
 
 #########################################################
 ######## Main 
+print "$outname escale $rescale\n";
 
+#print "Enter to continue\n";
+#my $pause=<STDIN>;
 Draw($outname,\@CLUSTERS,$s,$t,$tv,$w,$cutleft,$grueso,\%ColorNames, $rescale); 
 	#Draw(\@CLUSTERS,$s,$t,$tv,$w,$cutleft,$grueso,\%ColorNames); 
 #_________________________________________________________________
