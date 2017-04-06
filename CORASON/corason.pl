@@ -45,6 +45,8 @@ CORASON extense manual can be consulted at: https://github.com/nselem/EvoDivMet/
 			Leaving this option empty will conduce to search on all genomes in GENOME directory.
 
   --rescale,r         	Default: 85000 (integer) Increasing this number will show a bigger cluster region with smaller genes.
+
+  --antismash,a      	AntiSMASH file optional 
  
   --verbose,v           If you would like to read more output from scripts. 
 			Most of the time only useful if you would like script debugging.
@@ -91,7 +93,8 @@ GetOptions(
 	'e_core=f'=>\(my $e_core="1E-3") ,
 	'format=i'=>\(my $format_db=1),   
 	'list=s'=>\(my $list=""), 
-	'rescale=i'=>\(my $rescale=85000),  
+	'rescale=i'=>\(my $rescale=85000),
+	'antismash=s'=> \(my $antismash="none"),
 	'help'     =>   sub { HelpMessage(0) },
        ) or HelpMessage(1);
 
@@ -120,15 +123,16 @@ print "$logo \n";
 print color('reset');
 print "\n\n ##########################################################\n";
 print "Your current directory is $dir, local path $name\n";
-
-printVariables($verbose,$queries,$special_org,$e_value,$bitscore,$cluster_radio,$e_cluster,$e_core,$rescale,$rast_ids);
+printVariables($verbose,$queries,$special_org,$e_value,$bitscore,$cluster_radio,$e_cluster,$e_core,$rescale,$rast_ids,$antismash);
 
 my $list_all=get_lista($list,$verbose,$rast_ids);
 
 my $number=get_number($list,$list_all,$rast_ids);
 
 
-system ("CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids");
+print ("CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash");
+
+system ("CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash");
 
 ###############################################################################################
 
@@ -292,7 +296,7 @@ sub printVariables {
 	my $e_core=shift;
 	my $rescale=shift; 
 	my $rast_ids=shift;
-
+        my $antismash=shift;
 #######################################################################################
 ## Default values
 	my $e_value_default="1E-15";
@@ -307,6 +311,7 @@ sub printVariables {
 	print "\n\n";
 
 	if ($verbose){print "You are on verbose mode\n";}
+	if ($antismash){print "You will use antiSMASH file $antismash  \n";}
 
 	if ($queries){ $queries=print "I must check $queries is a fasta file\n";} 
 	else {print "A query file is needed, please provide one!\n"; exit;}

@@ -52,6 +52,7 @@ GetOptions(
         'list=s'=>\my $list ,
         'rast_ids=s' => \my $rast_ids,
         'type=s' => \my $type,
+	'antismash=s'=>\my $antismash,
 	 'help'     =>   sub { HelpMessage(0) },
         ) or HelpMessage(1);
 
@@ -69,7 +70,9 @@ my $eSeq=$e_value; 			## Evalue principal query
 
 printVariables();
 #______________________________________
-
+#########################################################################################################
+## Reading antismash file if exists
+	my %SMASH=antismash_read($antismash);
 ###############################################################################################################
 ######### Searching homologous hits to query
 ################################################################################################################# 
@@ -148,7 +151,7 @@ for my $orgs (sort keys %{$AllHits{$query_name}}){
 			my $percent=$sp[1];
 		#	print "Org ¡$orgs! Hit ¡$peg! percent $percent\n";
 		
-			ContextArray($query_name,$orgs,$peg,$special_org,$percent,\%ORGANISMS,\%AllHits);
+			ContextArray($query_name,$orgs,$peg,$special_org,$percent,\%ORGANISMS,\%AllHits,\%SMASH);
 		}
 }
 
@@ -207,6 +210,23 @@ sub readNames{
 	}
 
 #____________________________________________________________________________________________
+sub antismash_read{    
+ 	my $file_smash=shift;
+	my %SMASH;
+	if (-e $file_smash) { 
+		open (FILE,$file_smash) or die "could not open $file_smash $!\n";
+		foreach my $line (<FILE>) {
+			chomp  $line;
+#			print "$line\n";  
+			my @st=split("\t",$line);
+#			print "0:$st[0], 1:$st[1], 2:$st[2], 3:$st[3]\n";
+			$SMASH{$st[1]}=$st[2];
+		}  
+	} 
+	return %SMASH; 
+ } 
+
+
 sub ContextArray{
 	my $query_original=shift;
 	my $orgs=shift;
@@ -215,6 +235,9 @@ sub ContextArray{
 	my $percent0=shift;
 	my $refORGANISMS=shift;
 	my $refHits=shift;
+	my $refSMASH=shift;
+	my $antifunction="none";
+
 
 	#if ($verbose) {print "org $orgs peg $peg\n";}
 	open(FILE,">$query_original/$orgs\_$peg.input")or die "could not open $query_original/$orgs\_$peg.input file $!";
@@ -228,7 +251,12 @@ sub ContextArray{
 
 	#if($verbose){
 	#print "Context Arrays:hit $CONTEXT[0][0] start $CONTEXT[0][1] stop $CONTEXT[0][2] dir $CONTEXT[0][3] func $CONTEXT[0][4]\n\n";		}
-	print FILE "$CONTEXT[0][1]\t$CONTEXT[0][2]\t$CONTEXT[0][3]\t1\t$refORGANISMS->{$orgs}\t$CONTEXT[0][4]\t$CONTEXT[0][0]\t$percent0\n";
+	
+	 my $anti_query=$CONTEXT[0][0];
+	$anti_query=~s/\.peg//;
+	$anti_query=~s/fig\|//;
+	if(-exists $refSMASH->{$anti_query}){$antifunction=$refSMASH->{$anti_query}};
+	print FILE "$CONTEXT[0][1]\t$CONTEXT[0][2]\t$CONTEXT[0][3]\t1\t$refORGANISMS->{$orgs}\t$CONTEXT[0][4]\t$CONTEXT[0][0]\t$percent0\t$antifunction\n";
 
 	#print "Enter to continue\n";
 	#my $pause=<STDIN>;
@@ -276,6 +304,10 @@ sub ContextArray{
 					#print "Func $func 4:$CONTEXT[$count][4]\n";
 					#print "Hit 0:$CONTEXT[$count][0]\n";
 					#print "Percent $percent\n";
+	 				my $anti_query=$CONTEXT[$count][0];
+					$anti_query=~s/\.peg//;
+					$anti_query=~s/fig\|//;
+					if(-exists $refSMASH->{$anti_query}){$antifunction=$refSMASH->{$anti_query}};
 					print FILE "$CONTEXT[$count][1]\t"; # Hit
 					print FILE "$CONTEXT[$count][2]\t"; #Start
 					print FILE "$CONTEXT[$count][3]\t"; #stop
@@ -283,7 +315,8 @@ sub ContextArray{
 					print FILE "$refORGANISMS->{$orgs}\t"; #org name
 					print FILE "$CONTEXT[$count][4]\t"; #Funcion
 					print FILE "$CONTEXT[$count][0]\t"; #gen id
-					print FILE "$percent\n"; #PErcent of identity
+					print FILE "$percent\t"; #PErcent of identity
+					print FILE "$antifunction\n"; #antismash function if antismash file provide
 					print FILE2 ">$hit\n$amin\n";
 					}
 				else{

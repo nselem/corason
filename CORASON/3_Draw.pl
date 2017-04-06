@@ -48,10 +48,7 @@ my $tag = $svg->script(-type=>"text/ecmascript");
 
 #########################################################
 ######## Main 
-print "$outname escale $rescale\n";
 
-#print "Enter to continue\n";
-#my $pause=<STDIN>;
 Draw($outname,\@CLUSTERS,$s,$t,$tv,$w,$cutleft,$grueso,\%ColorNames, $rescale); 
 	#Draw(\@CLUSTERS,$s,$t,$tv,$w,$cutleft,$grueso,\%ColorNames); 
 #_________________________________________________________________
@@ -136,6 +133,7 @@ sub arrow{
 	my $percent=shift;
 	my $real_start=shift;
 	my $real_end=shift;
+	my $smash=shift;
   my $color1;
   my $color2;
   my $color3;
@@ -170,7 +168,7 @@ sub arrow{
 
 ##label
 	
-  my $desc="Identity:".$opacity." Organism:".$orgName." Coordinates:".$real_start." ".$real_end."\nDirection:".$dir." Gen Id:".$id_peg." Function ".$func;
+  my $desc="Identity:".$opacity." Organism:".$orgName." Coordinates:".$real_start." ".$real_end."\nDirection:".$dir." Gen Id:".$id_peg." Function ".$func." smash:".$smash;
 
 	# Treating genes supermiposed
 	if ($level==2){$v1=$v1+30; $v2+=30;$v3+=30;$v4+=30;$v5+=30;}
@@ -188,9 +186,15 @@ sub arrow{
 		if ($u3>$w){$u3=$w;$u4=$u3;$u5=$u4; }
 		my $path = $svg->get_path(x => [$u1+$t, $u2+$t, $u3+$t,$u4+$t,$u5+$t],   y => [$v1+$tv, $v2+$tv, $v3+$tv,$v4+$tv,$v5+$tv],  -type => 'polygon');
 
-		# Then we use that data structure to create a polygon
-		$svg->polygon(  %$path,title=>"$desc",style => {'fill'=> "rgb($color1,$color2,$color3)",'stroke' => 'black',
+		if($smash ne "none"){
+                	$svg->polygon(  %$path,title=>"$desc",style => {'fill'=> "rgb($color1,$color2,$color3)",'stroke' => 'steelblue',
+                        'stroke-width' =>2,'stroke-opacity' =>  1,'fill-opacity'=> 1,},);
+                        }
+		else{
+			# Then we use that data structure to create a polygon
+			$svg->polygon(  %$path,title=>"$desc",style => {'fill'=> "rgb($color1,$color2,$color3)",'stroke' => 'black',
 			'stroke-width' =>1,'stroke-opacity' =>  1,'fill-opacity'=> $opacity,},);
+			}
 		}
 	}
 
@@ -259,8 +263,11 @@ sub ReadContexts{  ###Here we read all the .input files
 			my $id_peg=$st[6];  #print "color $color#\n";
 			push (@{$CONTEXTS{$key}}, $id_peg);
 
-			my $percent=$st[7]; chomp $percent;
+			my $percent=$st[7]; #chomp $percent;
 			push (@{$CONTEXTS{$key}},$percent);
+
+			my $smash_function=$st[8]; chomp $smash_function;
+			push (@{$CONTEXTS{$key}},$smash_function);
 			}	
 		close FILE;			
 		}
@@ -313,26 +320,27 @@ foreach my $context(@CLUSTERS){
 			} ##up right;
 		####################################################################
 
-		for (my $i=0;$i<@{$refCONTEXTS->{$key}}/8;$i++){
-			my $start=$refCONTEXTS->{$key}[8*$i];
-			my $stop=$refCONTEXTS->{$key}[8*$i+1];
+		for (my $i=0;$i<@{$refCONTEXTS->{$key}}/9;$i++){
+			my $start=$refCONTEXTS->{$key}[9*$i];
+			my $stop=$refCONTEXTS->{$key}[9*$i+1];
 		#	print "start $start stop $stop\n";
 			#if ($start ne ""){my $s1=int((($w/$Rescale)*(int($start)-$X0)+$w/2)); }
 			my $s1=int((($w/$Rescale)*(int($start)-$X0)+$w/2)); 
 			#if ($stop ne ""){my $e1=int((($w/$Rescale)*(int($stop)-$X0)+$w/2));}
 			my $e1=int((($w/$Rescale)*(int($stop)-$X0)+$w/2));
-			my $dir=$refCONTEXTS->{$key}[8*$i+2];
-			my $color=$refCONTEXTS->{$key}[8*$i+3];
-			my $func=$refCONTEXTS->{$key}[8*$i+5];
-			my $id_peg=$refCONTEXTS->{$key}[8*$i+6];
-  			my $percent=$refCONTEXTS->{$key}[8*$i+7];
+			my $dir=$refCONTEXTS->{$key}[9*$i+2];
+			my $color=$refCONTEXTS->{$key}[9*$i+3];
+			my $func=$refCONTEXTS->{$key}[9*$i+5];
+			my $id_peg=$refCONTEXTS->{$key}[9*$i+6];
+  			my $percent=$refCONTEXTS->{$key}[9*$i+7];
+  			my $smash_function=$refCONTEXTS->{$key}[9*$i+8];
 
 			if($verbose){print "Key Start $start->$s1, stop $stop->$e1, dir $dir, \n";}
 			if($dir eq '+'){
-			$ARROWS{$s1}=[$s1,$e1,$key,$dir,$color,$DirCont,$w,$e0,$func,$id_peg,$percent,$start,$stop];
+			$ARROWS{$s1}=[$s1,$e1,$key,$dir,$color,$DirCont,$w,$e0,$func,$id_peg,$percent,$start,$stop,$smash_function];
 					}
 			else{
-			$ARROWS{$e1}=[$s1,$e1,$key,$dir,$color,$DirCont,$w,$e0,$func,$id_peg,$percent,$start,$stop];
+			$ARROWS{$e1}=[$s1,$e1,$key,$dir,$color,$DirCont,$w,$e0,$func,$id_peg,$percent,$start,$stop,$smash_function];
 					}
 		}
 		### Once I have all arrows on a cluster I sorted them and I set the levels, need to change levels to real coordinates not translated ones
@@ -351,6 +359,7 @@ foreach my $context(@CLUSTERS){
 			my $percent=$ARROWS{$arrow}[10];
 			my $start=$ARROWS{$arrow}[11];
 			my $stop=$ARROWS{$arrow}[12];
+			my $smash=$ARROWS{$arrow}[13];
 
 		#	if ($count>=1){ ##From level 1 we can go level 2 or stay 1
 		#		my $lastlevel=$level;
@@ -371,7 +380,7 @@ foreach my $context(@CLUSTERS){
 			if ($dir eq '+'){$lastStop=$e1;}
 			else{$lastStop=$s1;} $count++;
 			$level=1; ##Uncomment to set everything to the same level
-			arrow($s,$t,$tv,$grueso,$s1,$e1,$cont_number,$dir,$color,$level,$DirCont,$w,$e0,$func,$id_peg,$orgName,$cutleft,$refYCOORD,$refColorNames,$key,$percent,$start,$stop);
+			arrow($s,$t,$tv,$grueso,$s1,$e1,$cont_number,$dir,$color,$level,$DirCont,$w,$e0,$func,$id_peg,$orgName,$cutleft,$refYCOORD,$refColorNames,$key,$percent,$start,$stop,$smash);
 			if($verbose){print ("$s1,$e1,$key,$dir,$color,$level,$DirCont,$w,$e0,$func,$id_peg\n");		}
 			}
 
