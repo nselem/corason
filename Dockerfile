@@ -51,6 +51,6 @@ COPY . /usr/src/CORASON
 
 WORKDIR /usr/src/CORASON 
 ## Como paso variables ?
-CMD [ "perl", "./testworld.pl" ]
+CMD ["perl", "/root/EvoDivMet/CORASON/SSHcorason.pl"]
 
 ## Volumen para escribir la salida
