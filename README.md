@@ -76,7 +76,7 @@ once you finished all your queries exit the container
 ### 2.3.1 Run CORASON image on exec mode  
 You can also run corason from the beggining of the image without the interactive terminal. The next line is equivalent to steps 2.2 (Run your docker nselem/evodivmet image) and 2.3 (2.3 Run CORASON inside your docker)  
 
-`docker run nselem/evodivmet -v /mypath/mydir:/usr/src/CORASON /root/EvoDivMet/CORASON/SSHcorason.pl  yourquery.query yourRAST.Ids yourspecial_org`
+`docker run -it -v /mypath/mydir/:/usr/src/CORASON nselem/evodivmet:latest /root/EvoDivMet/CORASON/SSHcorason.pl yourquery.query yourRAST.Ids yourspecial_org`
 
 ### 2.4 Read your results ! 
 Outputs will be on the new folder /mypath/mydir/query   
