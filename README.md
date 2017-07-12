@@ -14,7 +14,7 @@ CORASON is a visual tool that searchs for gene clusters similar to a given one, 
 
 CORASON was developed to find and prioritize biosynthetic gene clusters, but can be used for any kind of clusters.  
 
-####Advantages
+#### Advantages
 -**SVG graphs** Scalable graphs that allows metadata easy display.  
 -**Interactive** CORASON is not an static database, it allows you to explore your own genomes.  
 -**Reproducibility** CORASON runs on docker, that allows to always conduce the same analysis even if you change your Linux/perl/blast/muscle/Gblocks/quicktree distributions.  
@@ -67,12 +67,17 @@ Use absolute paths, if you don’t know the path to your dir, place yourself on 
 `$ pwd`  
 **/usr/src/CORASON** is fixed at the docker images, you should always use this name.  
 
-
 ### 2.3 Run CORASON inside your docker  
 
 `$ corason.pl -q yourquery.query -rast_ids yourRAST.Ids -s yourspecial_org`
 once you finished all your queries exit the container  
 `$ exit`  
+
+### 2.3.1 Run CORASON image on exec mode  
+You can also run corason from the beggining of the image without the interactive terminal. The next line is equivalent to steps 2.2 (Run your docker nselem/evodivmet image) and 2.3 (2.3 Run CORASON inside your docker)  
+
+`docker run nselem/evodivmet -v /mypath/mydir:/usr/src/CORASON /root/EvoDivMet/CORASON/SSHcorason.pl  yourquery.query yourRAST.Ids yourspecial_org`
+
 ### 2.4 Read your results ! 
 Outputs will be on the new folder /mypath/mydir/query   
 - query.svg  SVG file with clusters similar to you query sorted phylogenetically  
