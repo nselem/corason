@@ -8,7 +8,7 @@ my @CLUSTERS=qx/ls $outname\/*.input/; 	## Read all input Uncomment to read all
 
 my $list="";
 my $relevant=0; #number of clusters with more than one coincidence
-my $coincidences=2;
+my $coincidences=3;
 #open (HITS,">PrincipalHits") or die "couldnt open hits file";
 #open (FASTA,">PrincipalHits.FASTA") or die "couldnt open hits file";
 
