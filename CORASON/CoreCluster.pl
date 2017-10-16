@@ -122,6 +122,7 @@ print "Creating query hits tree, without considering the core-clusters\n";
 	#constructing a tree with quicktree with a 100 times bootstrap
 	system "quicktree -i a -o t -b 100 $outname/RightNamesPrincipalHits.stockholm > $outname/PrincipalHits_TREE.tre";
 	system "mv $outname/PrincipalHits_TREE.tre $outname/$outname\_PrincipalHits.tre";
+	system("nw_topology -b -IL $outname/$outname\_PrincipalHits.tre | nw_display -b 'opacity:0' -v 20 -s - >$outname/$outname\_tree.svg");
 
 	system "nw_labels -I $outname/$outname\_PrincipalHits.tre>$outname/PrincipalHits.order";
 #	my $INPUTS=""; ## Orgs sorted according to a tree (Will be used on the Context draw)
@@ -134,22 +135,24 @@ print "Creating query hits tree, without considering the core-clusters\n";
 	#my $pause=<STDIN>;
 	system("2_OrthoGroups.pl -e_core $e_core -list $lista -num $num -rast_ids $rast_ids -outname $outname");
 	print "Core finished!\n\n";
-	my $boolCore= `wc -l $outname/Core`;
+	my $boolCore= `wc -l <$outname/Core`;
 	chomp $boolCore;
-	print "bool chomp $boolCore#";
-	$boolCore=~s/[^0-9]//g;
-	$boolCore=int($boolCore);
-	print "Elements on core: $boolCore!\n";
+	#print "Elements on core: $boolCore!\n";
 #____________________________________________________________________________________________________________
 if ($boolCore>1){
 	print "There is a core with at least two genes on this cluster\n";
 	$report=$report."\nThere is a core composed by $boolCore orhtolog on this cluster\n";
 	$report=$report. "Enzyme functions on reference organisms are given by:\n";
-	## Obteniendo el cluster del organismo de referenecia mas parecido al query
+	## Obteniendo el cluster del organismo de referencia mas parecido al query
 	# Abrimos los input files de ese organismo y tomamos el de mejor score
 	my $specialCluster=specialCluster($special_org);
 	print "Best cluster $specialCluster\n";
-	my $functions=`cut -f1,2 $outname/FUNCTION/$specialCluster.core.function `;
+	print "Best cluster $outname\n";
+	$specialCluster=~s/$outname\///;
+	my $functions=`cut -f1,2 $outname/CORASON/FUNCTION/$specialCluster.core.function `;
+	#my $pause=<STDIN>;
+	
+	print "cut -f1,2 $outname/CORASON/FUNCTION/$specialCluster.core.function ";
 	# print "cut -f1,2 $name/FUNCTION/$specialCluster.core.function ";
 	#	print "Function $functions#\n";
 	$report=$report."\n".$functions;
@@ -172,7 +175,9 @@ if ($boolCore>1){
 	system ("converter.pl $outname/RightNames.txt");
 	print "Constructing a tree with quicktree with a 100 times bootstrap\n";
 	system "quicktree -i a -o t -b 100 $outname/RightNames.stockholm > $outname/BGC_TREE.tre";
+
 	system "mv $outname/BGC_TREE.tre $outname/$outname\_BGC.tre";
+	system("nw_topology -b -IL $outname/$outname\_BGC.tre | nw_display -b 'opacity:0' -v 40 -s - >$outname/$outname\_tree.svg");
 	system "nw_labels -I $outname/$outname\_BGC.tre>$outname/$outname\_BGC_TREE.order";
 	$orderFile="$outname/$outname\_BGC_TREE.order";
 	print "I will draw SVG clusters with concatenated tree order\n";
@@ -300,6 +305,7 @@ sub cleanFiles{
         `rm -r $outname/*.faa`;
         `rm -r $outname/*.blast`;
         `rm -r $outname/*.txt`;
+	`chmod +w $outname $outname/*.*`
         }
 #_____________________________________________________________________________________
 

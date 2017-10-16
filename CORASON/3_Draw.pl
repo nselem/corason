@@ -21,13 +21,14 @@ my $outname=$ARGV[2];
 my $nClust=scalar @CLUSTERS; 	#number of cluster (until now one per organism)
 				#3 Used to draw lines
 my $w=800;  			## Size of the window
-my $t=10; 			##Traslation factor horizontal
+### I need to gt the longest branch to get translation mayb that could pe a parameter 
+my $t=100; 			##Traslation factor horizontal
 #if(!$ARGV[1]){$t=20;} 		##If there is not tree, there is not translation
-my $tv=0; 			##Translation factor Vertical
-my $s=16.3; 			#Vertical Separation factor
-my $h=100*($nClust); 		# 100 of heigth for draw each organisms
+my $tv=1; 			##Translation factor Vertical
+my $s=0; 			#Vertical Separation factor
+my $h=40*($nClust)+40; 		# 100 of heigth for draw each organism
 my $text=1; 			##Yes NO organism name
-my $grueso=16.0;		## Grosor de las flechas
+my $grueso=10.0;		## Grosor de las flechas
 my %ColorNames=Fill_Colors();
 my $cutleft=0;				
 my $verbose;
@@ -36,8 +37,8 @@ my $verbose;
 
     # create an SVG object with a size of 40x40 pixels
 my $svg = SVG->new(  	
-			width  => 1000,
-			height => $h,
+			width  => 1200,
+			height => $h+150,
 			onload=>'Init(evt)',
 			onmousemove=>' GetTrueCoords(evt); 
 			ShowTooltip(evt, true)',
@@ -46,7 +47,8 @@ my $svg = SVG->new(
 my $tag = $svg->script(-type=>"text/ecmascript");
 
 
-#########################################################
+### Draw frequencies 
+DrawFrequencies($h,$t,$nClust,\%ColorNames);
 ######## Main 
 
 Draw($outname,\@CLUSTERS,$s,$t,$tv,$w,$cutleft,$grueso,\%ColorNames, $rescale); 
@@ -64,10 +66,97 @@ close OUT;
 `perl -p -i -e 's/&//' $outname/Contextos.svg`;
 `perl -p -i -e 'if(/\<polygon/)\{s/title=\"/\>\n\<title\>/g;if(m{\/\>\$})\{s{\" \/\>}{\<\/title\>\<\/polygon\>};\}\}else\{if((!/^\t/) and m{\/\>})\{s{\" \/>}{<\/title><\/polygon>};\}\}' $outname/Contextos.svg`;
 
+my $file = "$outname/$outname\_tree.svg";
+my $document2 = do {
+    local $/ = undef;
+    open my $fh, "<", $file
+        or die "could not open $file: $!";
+    <$fh>;
+};
+
+$file = "$outname/Contextos.svg";
+my $document1_3 = do {
+    local $/ = undef;
+    open my $fh, "<", $file
+        or die "could not open $file: $!";
+    <$fh>;
+};
+
+my @parts=split('<script />',$document1_3);
+
+my @svg= split('<defs>',$document2);
+$svg[1]=~s/<\/svg>//;
+
+print "################33";
+
+my $joined=$parts[0]."<script \/>\n<defs>". $svg[1].$parts[1];
+
+open (OUT, ">$outname/Joined.svg") or die "Couldn't open $outname/Joined.svg \n$!";
+print OUT $joined;
+close OUT;
+
+#`perl -p -i -e 's/\<script \/\>/\<defs\>$svg[1]\n\<script\>/' $outname/Contextos.svg`;
+### Embed tree
 
 ##################################################################
 ###    subs ######################################################
 ##################################################################
+sub DrawFrequencies{
+	my $h=shift;
+	my $t=shift;
+	my $nClust=shift;
+	my $refColorNames=shift;
+
+	open (FREQ,"$outname/Frequency"), or die "couldn open frequency file$! \n ";
+
+	my $barNum=10;
+	foreach my $line (<FREQ>){
+		my @st=split('\t',$line);
+		## I want a rectangule size 
+		## This function will draw in how many cluster does a family appear
+		## So it is frequency relative to appeareance 
+		my $freq=$st[1]/$nClust;
+		if($st[0] ne 0){
+			my $color=$refColorNames->{$st[0]};
+			$color=~s/_/,/g;
+			if ($st[0] eq 1){$color="254,30,30"} 
+			#	print "$st[0] $freq rgb($color)\n";
+				my $barX1=$barNum;
+				my $barX2=$barNum+40;
+				$barNum=$barX2+10;
+				my $barY1=$h+100;
+				my $barY2=$h+100-50*$freq;
+				$barNum=$barX2+10;
+				my $percentage=100*$freq;
+			#	print "x1 $barX1, $barX2 Y: $barY1, $barY2,\n";
+				my $path = $svg->get_path(x => [$t+$barX1, $t+$barX1, $t+$barX2,$t+$barX2],   y => [$barY1, $barY2, $barY2,$barY1],  -type => 'polygon');
+       				 $svg->polygon(  %$path,title=>"$percentage",style => {'fill'=> "rgb($color)",'stroke' => 'steelblue', 'stroke-width' =>2,'stroke-opacity' =>  1,},);
+				}
+
+		## Axes Vertical ax 100,50,25,0
+		my $yv = [$h+100,$h+25,$h+50];
+		my $y0 = [$h+100,$h+100];
+		my $y1 = [$h+75,$h+75];
+		my $x1 = [$t-5,$t+5];
+		my $y2 = [$h+50,$h+50];
+		my $xv = [$t,$t,$t];
+		my $points2 = $svg->get_path(x=> $x1,y => $y2,-type => 'polyline',);
+		$svg->polyline ( %$points2,style => {'stroke'=> 'rgb(250,123,23)'});
+		my $points0 = $svg->get_path(x=> $x1,y => $y0,-type => 'polyline',);
+		$svg->polyline ( %$points0,style => {'stroke'=> 'rgb(250,123,23)'});
+		my $points1 = $svg->get_path(x=> $x1,y => $y1,-type => 'polyline',);
+		$svg->polyline ( %$points1,style => {'stroke'=> 'rgb(250,123,23)'});
+		my $points = $svg->get_path(x=> $xv,y => $yv,-type => 'polyline',);
+		$svg->polyline ( %$points,style => {'stroke'=> 'rgb(250,123,23)'});
+
+		$svg->text( x  => $t-50, y  => $h+100, style=>{'text-anchor'=>'start', 'font-size'=>10,  'font-family'=>'Arial', 'font-style'=>'italic'})->cdata("0%"); 
+		$svg->text( x  => $t-50, y  => $h+50, style=>{'text-anchor'=>'start', 'font-size'=>10,  'font-family'=>'Arial', 'font-style'=>'italic'})->cdata("100%"); 
+		$svg->text( x  => $t-50, y  => $h+75, style=>{'text-anchor'=>'start', 'font-size'=>10,  'font-family'=>'Arial', 'font-style'=>'italic'})->cdata("50%"); 
+		$svg->text( x  => $t, y  => $h+120, style=>{ 'font-size'=>5, 'font-family'=>'Arial', 'font-style'=>'italic'})->cdata("Percentage of BGCs that contains this gene family"); 
+		}	
+	}
+
+#########################################################
 sub Draw{
 	my $outname=shift;
 	my ($refCLUSTERS,$s,$t,$tv,$w,$cutleft,$grueso,$refColorNames,$rescale)=@_;
@@ -138,6 +227,7 @@ sub arrow{
   my $color2;
   my $color3;
 	my $opacity=$percent/100.0;
+	if ($color eq 0){$opacity=1;}
 	($color1,$color2,$color3)=fillColor($color,$refColorNames);
 
 	
@@ -188,7 +278,7 @@ sub arrow{
 
 		if($smash ne "none"){
                 	$svg->polygon(  %$path,title=>"$desc",style => {'fill'=> "rgb($color1,$color2,$color3)",'stroke' => 'steelblue',
-                        'stroke-width' =>2,'stroke-opacity' =>  1,'fill-opacity'=> 1,},);
+                        'stroke-width' =>2,'stroke-opacity' =>  1,'fill-opacity'=> $opacity,},);
                         }
 		else{
 			# Then we use that data structure to create a polygon
@@ -201,6 +291,7 @@ sub arrow{
 #______________________________________________________________________________________________
 
 sub line{
+	## This function draw horizontal lines where genes are going to be
 	my $s=shift;
 	my $t=shift;
 	my $tv=shift;
@@ -215,8 +306,8 @@ sub line{
 	my $v1=$refYCOORD->[$i]+$tv;my $v2=$refYCOORD->[$i]+$tv;
 	my $yv = [$v1,$v2];
 	my $points = $svg->get_path(x=> $xv,y => $yv,-type => 'polyline',);
-	$svg->polyline ( %$points,style => {'fill-opacity' => 0,'stroke-opacity' =>  .1,'stroke'=> 'rgb(250,123,23)'});
-	#$svg->text( x  => $t-350, y  => $yv)->cdata("$i:+$tv: Ycoord $YCOORD[$i], v1: $v1"); 
+	$svg->polyline ( %$points,style => {'fill-opacity' => 0,'stroke-dasharray'=>'5,5', 'stroke-opacity' =>  .5,'stroke'=> 'rgb(250,123,23)'});
+#	$svg->text( x  => $t+350, y  => $yv)->cdata("$i:+$tv: Ycoord $refYCOORD->[$i], v1: $v1"); 
 	}
 #______________________________________________________________________________________________
 sub ReadContexts{  ###Here we read all the .input files
@@ -316,7 +407,7 @@ foreach my $context(@CLUSTERS){
 		##	side	$svg->text( x  => 10+$t+$w, y  => $refYCOORD->[$cont_number-1]+$tv)->cdata("$orgName ;"); }
 			my @sp=split(/\./,$refCONTEXTS->{$key}[6]);
 			my $gen=$sp[-1];
-			$svg->text( x  => 10+$t, y  => $refYCOORD->[$cont_number-1]+$tv-20)->cdata("Genome $key:$orgName    Gen:$gen"); 
+			$svg->text( x  => 500+$t, y  => $refYCOORD->[$cont_number-1]+$tv-7, style=>{'text-anchor'=>'middle', 'font-size'=>10,  'font-family'=>'Arial', 'font-style'=>'italic'})->cdata("$key $orgName"); 
 			} ##up right;
 		####################################################################
 
@@ -445,7 +536,7 @@ sub set_lines{
 	my $size=shift;
 	my @YCOORD;
 		for (my $i=0; $i<$size;$i++){
-			$YCOORD[$i]=50+50*$i;
+			$YCOORD[$i]=20+40*$i;
 			}
 	return @YCOORD;		
 	}
