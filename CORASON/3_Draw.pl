@@ -82,7 +82,7 @@ my $document1_3 = do {
     <$fh>;
 };
 
-my @parts=split('<script />',$document1_3);
+my @parts=split(/<script\s*\/>/,$document1_3);
 
 my @svg= split('<defs>',$document2);
 $svg[1]=~s/<\/svg>//;

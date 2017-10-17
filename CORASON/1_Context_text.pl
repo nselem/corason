@@ -27,8 +27,8 @@ no warnings 'experimental::smartmatch';
 ## set boolMakeblast to 1 if no database has been created for each genome
 ## set boolMakeblast to 0 if there are already databases for each genome
 
-#Gets BestHits de acuerdo acording to the e-value
-# Writes gen Id, coordinatesand function
+# Gets BestHits acording to the e-value
+# Writes gen Id, coordinates and function
 # Author nselem84@gmail.com
 
 ################################################################################################################
@@ -102,11 +102,8 @@ BestHits($query_name,$query_name,\%Hits,\%AllHits);
 				#refHits->{$name}{$org}=[$percent,$peg];
 print "Looking for hits\n";
 #		foreach my $key (keys %Hits){ print "$key -> $Hits{$key}\n"; }
-		
 
 my %ORGANISMS=readNames($rast_ids);
-
-
 #my $PEG=$Hits{$name}{$special_org}[1];
 my $PEG=$Hits{$query_name}{$special_org}[1];
 
@@ -146,7 +143,6 @@ print "Now I will produce the *.input file\n";
 for my $orgs (sort keys %{$AllHits{$query_name}}){
 		foreach my $hit(@{$AllHits{$query_name}{$orgs}}){
 			my @sp = split("\_",$hit);
-
 			my $peg=$sp[0];
 			my $percent=$sp[1];
 		#	print "Org ¡$orgs! Hit ¡$peg! percent $percent\n";
@@ -155,17 +151,6 @@ for my $orgs (sort keys %{$AllHits{$query_name}}){
 		}
 }
 
-
-#for my $orgs(keys %ORGANISMS){
-#	if (!(-e "$orgs.input")){
-#		open FILE, ">$orgs.input" or die "Could not create input file $orgs.input\n";
-#		print FILE "0\t0\t-\t0\t$ORGANISMS{$orgs}\t0\t0\n";
-#		close FILE;
-#
-#		open FILE2, ">MINI/$orgs.faa" or die "Could not create input file MINI/$orgs.faa\n";
-#		close FILE2;
-#		}
-#}
 
 if ($verbose){print "$query_name, $special_org $PEG\n";}
 `rm $query_name/Cluster*.*.*`;
@@ -226,7 +211,7 @@ sub antismash_read{
 	return %SMASH; 
  } 
 
-
+##_________________________________________________________________________________________________
 sub ContextArray{
 	my $query_original=shift;
 	my $orgs=shift;
@@ -244,6 +229,9 @@ sub ContextArray{
 	open(FILE3,">$query_original/$orgs\_$peg.input2")or die "could not open $query_original/$orgs\_.$peg.input2 file $!";
 
 	open(FILE2,">$query_original/MINI/$orgs\_$peg.faa")or die "could not open $query_original/MINI/$orgs\_$peg.faa file $!";
+#	print("$query_original, $orgs\n");
+#	my $pause=<SDTIN>;
+#	open(FILE3,">$query_original/$orgs\_$peg.bgc")or die "could not open $query_original/MINI/$orgs\_$peg.faa file $!";
 
 	my @CONTEXT;
 	my ($hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0)=getInfo($peg,$orgs);
@@ -258,13 +246,6 @@ sub ContextArray{
 	if(-exists $refSMASH->{$anti_query}){$antifunction=$refSMASH->{$anti_query}};
 	print FILE "$CONTEXT[0][1]\t$CONTEXT[0][2]\t$CONTEXT[0][3]\t1\t$refORGANISMS->{$orgs}\t$CONTEXT[0][4]\t$CONTEXT[0][0]\t$percent0\t$antifunction\n";
 
-	#print "Enter to continue\n";
-	#my $pause=<STDIN>;
-	#my $PreOrgNam=$refORGANISMS->{$orgs};
-	#my @PreNames=split(" ",$PreOrgNam);
-	#my $orgNam=$PreNames[0]."_".$PreNames[1];
-	#my $orgNam=$PreOrgNam;
-	#$orgNam=~s/ /_/g;
 	my $genId=$hit0;
 	$genId=~s/fig\|/_/g;
 	my @spt=split(/\./,$genId);

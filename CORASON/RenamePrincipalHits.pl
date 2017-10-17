@@ -8,9 +8,16 @@ my $outname=$ARGV[0];
 my $RAST_IDs=$ARGV[2];
 if (-e "$outname/$file.txt"){`rm $outname/$file.txt`;}
 open (NAMES,"$RAST_IDs") or die "Couldn't open NAMES file $RAST_IDs $!";
-open (SEQUENCE,"$outname/$file.muscle-gb") or die "Couldn't open $outname/$file.muscle-gb file $!";
-open (BAYES,">>$outname/RightNames$file.txt") or die "Couldn't open $outname/RightNames$file.txt file $!";
+open (SEQUENCE,"$outname/$file") or die "Couldn't open $outname/$file file $!";
 
+if($file=~/gb/){
+	$file=~s/\.muscle-gb//;
+	open (BAYES,">>$outname/RightNames$file.txt") or die "Couldn't open $outname/RightNames$file.txt file $!";
+}
+else{
+	$file=~s/\.muscle//;
+	open (BAYES,">>$outname/RightNames$file\_Unshaved.txt") or die "Couldn't open $outname/RightNames\_Unshaved$file.txt file $!";
+}
 my %SEQUENCES;
 my %NAMES;
 

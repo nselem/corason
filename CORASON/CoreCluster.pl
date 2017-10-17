@@ -96,6 +96,7 @@ my $NUM = `wc -l < $rast_ids`;
 
 print "Analising cluster with hits according to the query sequence\n\n";
 	my $new_data=`ReadingInputs.pl $outname`; 
+	#exit;
 	my @st=split(/\t/,$new_data);
 ($num,$lista)=split(/\t/,$new_data);
 #$num=$st[0]; 
@@ -112,21 +113,23 @@ print "Creating query hits tree, without considering the core-clusters\n";
 
         print "\nAligning Sequences \n";
         system "muscle -in $outname/PrincipalHits -out $outname/PrincipalHits.muscle -fasta -quiet -group";
-
         print "\nShaving alignments with Gblocks\n";
         system "Gblocks $outname/PrincipalHits.muscle -b4=5 -b5=n -b3=5";
-        system("RenamePrincipalHits.pl $outname PrincipalHits $rast_ids");
-
-        print "Saving as Stockolm format\n";
-	system(" converter.pl $outname/RightNamesPrincipalHits.txt ");
-	#constructing a tree with quicktree with a 100 times bootstrap
-	system "quicktree -i a -o t -b 100 $outname/RightNamesPrincipalHits.stockholm > $outname/PrincipalHits_TREE.tre";
-	system "mv $outname/PrincipalHits_TREE.tre $outname/$outname\_PrincipalHits.tre";
+        system("RenamePrincipalHits.pl $outname PrincipalHits.muscle-gb $rast_ids");
+	system "FastTree $outname/RightNamesPrincipalHits.txt > $outname/$outname\_PrincipalHits.tre";
 	system("nw_topology -b -IL $outname/$outname\_PrincipalHits.tre | nw_display -b 'opacity:0' -v 20 -s - >$outname/$outname\_tree.svg");
-
 	system "nw_labels -I $outname/$outname\_PrincipalHits.tre>$outname/PrincipalHits.order";
-#	my $INPUTS=""; ## Orgs sorted according to a tree (Will be used on the Context draw)
 	$orderFile="$outname/PrincipalHits.order";
+	if(! -e "$outname/PrincipalHits.order"){
+	##last hope, if the enzyme tree cant be produced this may be due tu the shave
+	## So we will try the tree without shave the enzyme 
+        system("RenamePrincipalHits.pl $outname PrincipalHits.muscle $rast_ids");
+	system "FastTree $outname/RightNamesPrincipalHits_Unshaved.txt > $outname/$outname\_Unshaved.tre";
+	system("nw_topology -b -IL $outname/$outname\_Unshaved.tre | nw_display -b 'opacity:0' -v 20 -s - >$outname/$outname\_tree.svg");
+	system "nw_labels -I $outname/$outname\_Unshaved.tre>$outname/PrincipalHitsUnshaved.order";
+	$orderFile="$outname/PrincipalHitsUnshaved.order";
+	}
+
 #______________________________________________________________________________________________________________
 
 	print "Searching genetic core on selected clusters\n";
@@ -172,11 +175,9 @@ if ($boolCore>1){
 	$len--;
 	$report=$report."\nAminoacid array size = $len \n\n";
 	print "Formating matrix..\n";
-	system ("converter.pl $outname/RightNames.txt");
-	print "Constructing a tree with quicktree with a 100 times bootstrap\n";
-	system "quicktree -i a -o t -b 100 $outname/RightNames.stockholm > $outname/BGC_TREE.tre";
+	system "FastTree $outname/RightNames.txt > $outname/$outname\_BGC.tre";
 
-	system "mv $outname/BGC_TREE.tre $outname/$outname\_BGC.tre";
+#	system "mv $outname/BGC_TREE.tre $outname/$outname\_BGC.tre";
 	system("nw_topology -b -IL $outname/$outname\_BGC.tre | nw_display -b 'opacity:0' -v 40 -s - >$outname/$outname\_tree.svg");
 	system "nw_labels -I $outname/$outname\_BGC.tre>$outname/$outname\_BGC_TREE.order";
 	$orderFile="$outname/$outname\_BGC_TREE.order";
@@ -301,7 +302,6 @@ sub cleanFiles{
         `rm $outname/Core0`;
         `rm -r $outname/OUTSTAR`;
         `rm -r $outname/MINI`;
-        `rm -r $outname/*.stockholm`;
         `rm -r $outname/*.faa`;
         `rm -r $outname/*.blast`;
         `rm -r $outname/*.txt`;

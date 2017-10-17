@@ -6,7 +6,6 @@ use warnings;
 ## This script keeps only files that have at least 2 enzymes on common with the Best Cluster
 ## It also prints a frequency table of each enzyme inside the gen cluster
 ##
-##
 
 my $outname=$ARGV[0];
 #print "Outname directory is $outname\n";
@@ -40,11 +39,16 @@ foreach my $context(@CLUSTERS){
 		$relevant++;	
 		$list=$list.$file.",";
 
-		###### Geting the frequency
+		###### Geting the frequency for frequency tables
 		foreach my $num(@unique){
 			if(-exists $FREQ{$num}){$FREQ{$num}++;}
 			else{$FREQ{$num}=1;}
 			}
+		##### Printing the GBK
+		system("perl GbkCreator.pl $file $outname");
+		#my $pause=<STDIN>;
+		#print "pause\n";
+			
 		}
 	else {	
 		#print "Voy a remover $file\n";
