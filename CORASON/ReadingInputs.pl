@@ -12,6 +12,9 @@ my $outname=$ARGV[0];
 my @CLUSTERS=qx/ls $outname\/*.input/; 	## Read all input Uncomment to read all
 my %FREQ;
 
+if(-e "$outname/GBK"){system("rm -r $outname/GBK");}
+system(mkdir "$outname/GBK");
+
 my $list="";
 my $relevant=0; #number of clusters with more than one coincidence
 my $coincidences=3; ## Becouse 0, and 1 are already coincidences

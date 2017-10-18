@@ -3,6 +3,7 @@ use strict;
 use Bio::SeqFeature::Generic;
 use Bio::Seq;
 use Bio::SeqIO;
+use Bio::Species;
 ###########################################################################
 # Get a Gen Id and a File Id (Genome.txt) and extracts 20 genes 
 # (10 each side) on genebank format
@@ -23,20 +24,24 @@ readingTxtFile($genomeId,\%TXT);
 my @BGC=fillinIdsArray($genId,$genomeId); ## I need to change this instead of numbers go for coordinates !!
 #foreach my $id (@BGC){print"$id\n";}
 
-
-AnotateGBK($genId,\%TXT,\@BGC);
+AnotateGBK($genomeId,$genId,\%TXT,\@BGC);
 
 sub AnotateGBK{
-
+	my $genomeId=shift;
 	my $genID=shift;
 	my $refTXT=shift;
 	my $refBGC=shift;
 	$genID=~s/\|/\./;
-	my $io = Bio::SeqIO->new(-format => "genbank", -file => ">$outname/$genID.gb" );
+	my $io = Bio::SeqIO->new(-format => "genbank", -file => ">$outname/GBK/$genID.gbk" );
 	my $originalcontig="Unknown";
 	if(-e $refTXT->{$genID}[0]){$originalcontig=$refTXT->{$genID}[0];}
 	# create a simple Sequence object
-	my $seq_obj = Bio::Seq->new(-seq => "", -display_id => "$originalcontig" );
+	my $seq_obj = Bio::Seq->new(-seq => "aaaaaaa", -display_id => "$originalcontig");
+                                    # Can also pass classification
+                                    # array to new as below
+    	my @classification=($genomeId);
+	my   $species = Bio::Species->new(-classification => [@classification]);
+	$seq_obj->species($species);
 
 	foreach my $gen(@{ $refBGC }){
 		#print "$gen\n";
@@ -50,7 +55,7 @@ sub AnotateGBK{
 		my $product=$refTXT->{$gen}[4];
 		# create the feature with some data, evidence and a note
 		my $feat = new Bio::SeqFeature::Generic(-start  => $start,-end => $end,-strand => $strand, 
-		-primary_tag => 'CDS',-tag => {contig=>"$contig",translation => "$translation" , product=>"$product", protein_id=>"$gen" });
+		-primary_tag => 'CDS',-tag => {organism=>"homo sapiens",contig=>"$contig",translation => "$translation" , product=>"$product", protein_id=>"$gen" });
 
 		# then add the feature we've created to the sequence
 		$seq_obj->add_SeqFeature($feat);
