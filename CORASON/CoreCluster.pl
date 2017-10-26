@@ -117,7 +117,7 @@ print "Creating query hits tree, without considering the core-clusters\n";
         system "Gblocks $outname/PrincipalHits.muscle -b4=5 -b5=n -b3=5";
         system("RenamePrincipalHits.pl $outname PrincipalHits.muscle-gb $rast_ids");
 	system "FastTree $outname/RightNamesPrincipalHits.txt > $outname/$outname\_PrincipalHits.tre";
-	system("nw_topology -b -IL $outname/$outname\_PrincipalHits.tre | nw_display -b 'opacity:0' -v 20 -s - >$outname/$outname\_tree.svg");
+	system("nw_topology -b -IL $outname/$outname\_PrincipalHits.tre | nw_display -b 'opacity:0' -v 40 -s - >$outname/$outname\_tree.svg");
 	system "nw_labels -I $outname/$outname\_PrincipalHits.tre>$outname/PrincipalHits.order";
 	$orderFile="$outname/PrincipalHits.order";
 	if(! -e "$outname/PrincipalHits.order"){
@@ -125,7 +125,7 @@ print "Creating query hits tree, without considering the core-clusters\n";
 	## So we will try the tree without shave the enzyme 
         system("RenamePrincipalHits.pl $outname PrincipalHits.muscle $rast_ids");
 	system "FastTree $outname/RightNamesPrincipalHits_Unshaved.txt > $outname/$outname\_Unshaved.tre";
-	system("nw_topology -b -IL $outname/$outname\_Unshaved.tre | nw_display -b 'opacity:0' -v 20 -s - >$outname/$outname\_tree.svg");
+	system("nw_topology -b -IL $outname/$outname\_Unshaved.tre | nw_display -b 'opacity:0' -v 40 -s - >$outname/$outname\_tree.svg");
 	system "nw_labels -I $outname/$outname\_Unshaved.tre>$outname/PrincipalHitsUnshaved.order";
 	$orderFile="$outname/PrincipalHitsUnshaved.order";
 	}

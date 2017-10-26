@@ -4,6 +4,7 @@
 ## this file input is an NCBI file, a name of the file and the proposed rastid and 
 ## output is a fasta file with proposed rast id and a txt wit the same id.
 ## this scrits numbers consecutively each feature.
+
 use Bio::SeqIO;
 my $file=$ARGV[0];
 my $number=$ARGV[1];
