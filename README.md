@@ -95,7 +95,9 @@ Code and docker file located at:
 - `$ which curl`
 - `$ sudo apt-get update`
 - `$ sudo apt-get install curl`
-
+### Example  
+### Convert data
+perl gbkIndex.pl yourgbkfolder
 ### To do list
 - [ ] Create a direct access with Logo
 - [x] Redirect process to a different folder so multiple runs can be performed without data mess
