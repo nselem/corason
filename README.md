@@ -42,10 +42,10 @@ You may need to restart your computer and not just log out from your session in 
 Test your docker engine with the command:  
 `$ docker run hello-world`  
 
-###1 Download CORASON images from DockerHub
+### 1 Download CORASON images from DockerHub
 `$ docker pull nselem/evodivmet:latest  `  
 
-#####Important  
+##### Important  
 `docker pull ` may be slow depending on your internet connection, because nselem/evodivmet docker-image is being downloaded, its only this time won’t happen again.
 
 ### 2 Run CORASON
