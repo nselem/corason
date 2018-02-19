@@ -295,14 +295,14 @@ sub cleanFiles{
         `rm $outname/*.input2`;
         `rm $outname/Core`;
         `rm $outname/PrincipalHits`;
-        `rm $outname/PrincipalHits.muscle`;
-        `rm $outname/PrincipalHits.muscle-gb`;
+        `# rm $outname/PrincipalHits.muscle`;
+        `# rm $outname/PrincipalHits.muscle-gb`;
         `rm $outname/PrincipalHits.muscle-gb.htm`;
         `rm $outname/*.order`;
         `rm $outname/Core0`;
         `rm -r $outname/OUTSTAR`;
-        `rm -r $outname/MINI`;
-        `rm -r $outname/*.faa`;
+        `# rm -r $outname/MINI`;
+        `# rm -r $outname/*.faa`;
         `rm -r $outname/*.blast`;
         `rm -r $outname/*.txt`;
 	`chmod +w $outname $outname/*.*`
