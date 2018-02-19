@@ -60,9 +60,9 @@ file.query (aminoacid fasta file) Save as many queries as you wish to process.
 
 ### 2.2 Run your docker nselem/evodivmet image  
 
-`$ docker run -i -t -v /mypath/mydir:/usr/src/CORASON  nselem/evodivmet /bin/bash`
+`$ docker run -i -t -v $(pwd):/usr/src/CORASON  nselem/evodivmet /bin/bash`
 
-**/mypath/mydir/** is your local directory were you store your inputs, can have any name you choose.  
+**$(pwd)** points to your working directory were you store your query file and GENOMES database.  
 Use absolute paths, if you don’t know the path to your dir, place yourself on your directory and type on the terminal  
 `$ pwd`  
 **/usr/src/CORASON** is fixed at the docker images, you should always use this name.  
