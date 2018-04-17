@@ -48,7 +48,7 @@ foreach my $context(@CLUSTERS){
 			else{$FREQ{$num}=1;}
 			}
 		##### Printing the GBK
-		system("perl GbkCreator.pl $file $outname");
+		system("GbkCreator.pl $file $outname");
 		#my $pause=<STDIN>;
 		#print "pause\n";
 			
