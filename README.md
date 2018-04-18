@@ -23,7 +23,7 @@ CORASON was developed to find and prioritize biosynthetic gene clusters, but can
 
 0. Install docker engine   
 1. Download nselem/evodivmet docker-image  
-2. Run CORASON  
+2. Run CORASON   
 
 Follow the steps, and type the commands into your terminal, do not type $.  
 
