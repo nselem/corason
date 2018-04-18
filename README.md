@@ -60,7 +60,7 @@ file.query (aminoacid fasta file) Save as many queries as you wish to process.
 
 ### 2.2 Run your docker nselem/evodivmet image  
 
-`$ docker run -i -t -v $(pwd):/usr/src/CORASON  nselem/evodivmet /bin/bash`
+`$ docker run --rm -i -t -v $(pwd):/usr/src/CORASON  nselem/evodivmet /bin/bash`
 
 **$(pwd)** points to your working directory were you store your query file and GENOMES database.  
 Use absolute paths, if you don’t know the path to your dir, place yourself on your directory and type on the terminal  
@@ -76,7 +76,7 @@ once you finished all your queries exit the container
 ### 2.3.1 Run CORASON image on exec mode  
 You can also run corason from the beggining of the image without the interactive terminal. The next line is equivalent to steps 2.2 (Run your docker nselem/evodivmet image) and 2.3 (2.3 Run CORASON inside your docker)  
 
-`docker run -it -v /mypath/mydir/:/usr/src/CORASON nselem/evodivmet:latest /root/EvoDivMet/CORASON/SSHcorason.pl yourquery.query yourRAST.Ids yourspecial_org`
+`docker run --rm -v /mypath/mydir/:/usr/src/CORASON nselem/evodivmet:latest /root/EvoDivMet/CORASON/SSHcorason.pl yourquery.query yourRAST.Ids yourspecial_org`
 
 ### 2.4 Read your results ! 
 Outputs will be on the new folder /mypath/mydir/query   
