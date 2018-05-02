@@ -93,7 +93,7 @@ else{
 
 MakeBlast($query_name,$MakeDB,$type,$query_name,$eSeq,$DB,$bitscore,$num,$genome_dir,$rast_ids,@LISTA); 	
 				## Search query by blast in all the other organisms
-				## Save blast results on a $name file
+				## Save blast results on a $name file.BLASt
 my %Hits; 			
 my %AllHits;
 BestHits($query_name,$query_name,\%Hits,\%AllHits);
@@ -121,19 +121,7 @@ my %CLUSTER;
 				print "Searching for homologous gene in clusters \n";
 #### 
 my %CLUSTERcolor=BlastColor($query_name,$PEG,$special_org,$cluster_radio,$num,$eClust,$DB,$genome_dir,$rast_ids,\%CLUSTER,@LISTA);
-#foreach my $peg (sort keys %CLUSTERcolor){
-#	print "Peg $peg orgs $orgs";
-#	foreach my $orgs (@{$CLUSTERcolor{$peg}}){
-#		foreach my $color_percent(@{$CLUSTERCOLOR{$peg}[$orgs]}){
-#			print "Color $color_percent\t";
-#		}
-#		print "\n";
-#	}
-#}
-##print "Pause to look into blast\n";
-##my $pause=<STDIN>;
-				print "I have colored genes according to homology\n";		
-## Color if pegi_orgj in Cluster{$peg} for some peg set colorNumber 
+print "I have colored genes according to homology\n";		
 ########################################################################################################################
 
 print "Now I will produce the *.input file\n";
@@ -142,11 +130,11 @@ print "Now I will produce the *.input file\n";
 
 for my $orgs (sort keys %{$AllHits{$query_name}}){
 		foreach my $hit(@{$AllHits{$query_name}{$orgs}}){
+			print "hit $hit\n";
 			my @sp = split("\_",$hit);
 			my $peg=$sp[0];
 			my $percent=$sp[1];
-		#	print "Org ¡$orgs! Hit ¡$peg! percent $percent\n";
-		
+			print "Org->$orgs, Hit ¡$peg! percent $percent\n";
 			ContextArray($query_name,$orgs,$peg,$special_org,$percent,\%ORGANISMS,\%AllHits,\%SMASH);
 		}
 }
@@ -224,17 +212,28 @@ sub ContextArray{
 	my $antifunction="none";
 
 
-	#if ($verbose) {print "org $orgs peg $peg\n";}
+	#if ($verbose) {
+	#	print "org $orgs peg $peg\n";
+	#	}
 	open(FILE,">$query_original/$orgs\_$peg.input")or die "could not open $query_original/$orgs\_$peg.input file $!";
 	open(FILE3,">$query_original/$orgs\_$peg.input2")or die "could not open $query_original/$orgs\_.$peg.input2 file $!";
 
 	open(FILE2,">$query_original/MINI/$orgs\_$peg.faa")or die "could not open $query_original/MINI/$orgs\_$peg.faa file $!";
 #	print("$query_original, $orgs\n");
-#	my $pause=<SDTIN>;
 #	open(FILE3,">$query_original/$orgs\_$peg.bgc")or die "could not open $query_original/MINI/$orgs\_$peg.faa file $!";
 
 	my @CONTEXT;
-	my ($hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0)=getInfo($peg,$orgs);
+	my ($hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0);
+	if ($orgs==501836 and $peg==2787){
+		my $pause=<STDIN>;
+		print "org $orgs peg $peg\n";
+		($hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0)=getInfo($peg,$orgs);
+		print"$hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0\n";#=getInfo($peg,$orgs);
+		}
+	else{
+		($hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0)=getInfo($peg,$orgs);
+		}
+
 	$CONTEXT[0]=[$hit0,$start0,$stop0,$dir0,$func0];
 
 	#if($verbose){
@@ -317,7 +316,7 @@ close FILE2;
 sub getInfo{		## Read the txt
 	my $peg=shift;
 	my $orgs=shift;
-	my $Grep=`grep 'peg.$peg\t' GENOMES/$orgs.txt`;
+	my $Grep=`grep 'fig|[0-9]*.[0-9]*.[a-z]*.$peg\t' GENOMES/$orgs.txt`;
 	
 	#print "Org $orgs\nGrep $Grep\n";
 
@@ -343,7 +342,7 @@ sub getInfo{		## Read the txt
 sub getSeq{
 	my $peg=shift;
 	my $orgs=shift;
-	my $Grep=`grep 'peg.$peg\t' GENOMES/$orgs.txt`;
+	my $Grep=`grep 'fig|[0-9]*.[0-9]*.[a-z].$peg\t' GENOMES/$orgs.txt`;
 	my @sp=split("\t",$Grep);	
 	my $hit=$sp[1];
 	my $seq=$sp[12];
@@ -357,7 +356,7 @@ sub getGenesContigReference{
          my $pegRef=shift;
          my $org=shift;
          my $clusterSize=shift;
-         my $Grep=`grep 'peg.$pegRef\t' GENOMES/$org.txt`;
+         my $Grep=`grep 'fig|[0-9]*.[0-9]*.[a-z]*.$pegRef\t' GENOMES/$org.txt`;
          my @sp=split("\t",$Grep);
          my $contigRef = $sp[0];
          my $peg;
@@ -368,7 +367,7 @@ sub getGenesContigReference{
 	
          while($peg<=$pegRef+$clusterSize){
                  #$peg++;
-                 $Grep=`grep 'peg.$peg\t' GENOMES/$org.txt`;
+                 $Grep=`grep 'fig|[0-9]*.[0-9]*.[a-z]*.$peg\t' GENOMES/$org.txt`;
                  @sp=split("\t",$Grep);
                  my $contig= $sp[0];
 		#print "contig: $contig \n";
@@ -405,7 +404,7 @@ sub header{
     				} 
     			}#end while EACH
   		close EACH;
-		#print "File $num done\n";
+		#print "File $num /done\n";
 
 		}#end 
 
@@ -652,7 +651,10 @@ sub BestHits{ ##For a given query
 
 	while (my $line=<FILE>){
 		chomp $line;
-	#	print "Blast line: $line\n";
+		#if($line=~/6666666\.279307/){
+		#	print "Blast line: $line\n"; 
+		#	my $pause=<STDIN>;
+		#	}
 		my @sp=split("\t",$line);
 		my @sp1=split('\|',$sp[1]);
 		my @sp2=split('\.',$sp1[1]);
