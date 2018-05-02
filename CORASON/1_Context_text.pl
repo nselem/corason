@@ -130,11 +130,11 @@ print "Now I will produce the *.input file\n";
 
 for my $orgs (sort keys %{$AllHits{$query_name}}){
 		foreach my $hit(@{$AllHits{$query_name}{$orgs}}){
-			print "hit $hit\n";
+			#print "hit $hit\n";
 			my @sp = split("\_",$hit);
 			my $peg=$sp[0];
 			my $percent=$sp[1];
-			print "Org->$orgs, Hit ¡$peg! percent $percent\n";
+			#print "Org->$orgs, Hit ¡$peg! percent $percent\n";
 			ContextArray($query_name,$orgs,$peg,$special_org,$percent,\%ORGANISMS,\%AllHits,\%SMASH);
 		}
 }
@@ -223,16 +223,7 @@ sub ContextArray{
 #	open(FILE3,">$query_original/$orgs\_$peg.bgc")or die "could not open $query_original/MINI/$orgs\_$peg.faa file $!";
 
 	my @CONTEXT;
-	my ($hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0);
-	if ($orgs==501836 and $peg==2787){
-		my $pause=<STDIN>;
-		print "org $orgs peg $peg\n";
-		($hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0)=getInfo($peg,$orgs);
-		print"$hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0\n";#=getInfo($peg,$orgs);
-		}
-	else{
-		($hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0)=getInfo($peg,$orgs);
-		}
+	my ($hit0,$start0,$stop0,$dir0,$func0,$contig0,$amin0)=getInfo($peg,$orgs);
 
 	$CONTEXT[0]=[$hit0,$start0,$stop0,$dir0,$func0];
 
