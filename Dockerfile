@@ -4,6 +4,9 @@ FROM perl:5.20
 ## Installing perl module
 RUN curl -L http://cpanmin.us | perl - App::cpanminus
 RUN cpanm SVG
+RUN cpanm Bio::SeqIO;
+RUN cpanm Bio::SeqFeature::Generic;
+#RUN cpanm Bio::Seq;
 ###____________________________________________
 RUN if [ ! -d /opt ]; then mkdir /opt; fi
 ###____________________________________________
@@ -13,9 +16,6 @@ RUN mkdir /opt/blast && curl ftp://ftp.ncbi.nlm.nih.gov/blast/executables/blast+
 # Instaling muscle
  RUN wget -O /opt/muscle3.8.tar.gz http://www.drive5.com/muscle/downloads3.8.31/muscle3.8.31_i86linux64.tar.gz
  RUN mkdir /opt/muscle && tar -C /opt/muscle -xzvf /opt/muscle3.8.tar.gz && ln -s /opt/muscle/muscle3.8.31_i86linux64 /opt/muscle/muscle  
-####__________________________________________________________________
-# Installing GBlocks
-RUN curl -SL http://molevol.cmima.csic.es/castresana/Gblocks/Gblocks_Linux64_0.91b.tar.Z | tar -xzC /opt && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
 ####___________________________________________________________________
 ## Instaling FastTree
 RUN mkdir /opt/fasttree && wget -O /opt/fasttree/FastTree http://www.microbesonline.org/fasttree/FastTree && chmod +x /opt/fasttree/FastTree
@@ -32,10 +32,10 @@ RUN cd vim && ./configure && make VIMRUNTIMEDIR=/usr/share/vim/vim74 && make ins
 ## CORASON
 RUN git clone https://github.com/nselem/EvoDivMet
 RUN mkdir /opt/CORASON
+####__________________________________________________________________
+# Installing GBlocks
+#RUN mv /root/CORASON/Gblocks_Linux64_0.91b.tar.Z | tar -xzC /opt && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
 
-RUN cpanm Bio::SeqIO;
-RUN cpanm Bio::SeqFeature::Generic;
-#RUN cpanm Bio::Seq;
 
 ######### PATHS ENVIRONMENT
 ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_1.1/bin:/root/EvoDivMet/CORASON:/opt/fasttree
