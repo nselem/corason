@@ -12,8 +12,7 @@ use Bio::Species;
 
 my $genId=$ARGV[0]; ## something like fig|6666666.279404.peg.1
 my $outname=$ARGV[1];
-#501933_4070.input
-chomp $genId; 
+#chomp $genId; 
 #print "GenId is $genId\n";
 #my $pause=<STDIN>;
 $genId=~/(\d*)_(\d*)/; my $genNumber=$2; my $genomeId=$1;
