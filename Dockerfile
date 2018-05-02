@@ -34,8 +34,7 @@ RUN git clone https://github.com/nselem/EvoDivMet
 RUN mkdir /opt/CORASON
 ####__________________________________________________________________
 # Installing GBlocks
-#RUN mv /root/CORASON/Gblocks_Linux64_0.91b.tar.Z | tar -xzC /opt && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
-
+RUN tar -xf /root/EvoDivMet/CORASON/Gblocks_Linux64_0.91b.tar.Z -C /opt/ && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
 
 ######### PATHS ENVIRONMENT
 ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_1.1/bin:/root/EvoDivMet/CORASON:/opt/fasttree
