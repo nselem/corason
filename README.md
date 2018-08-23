@@ -1,23 +1,17 @@
-# EvoDivMet
-Bioinformatic Tools for studying evolution of metabolic diversity
-Tools:  
-- EvoMining  
-- CORASON  
+# CORASON
 
-## CORASON
+## CORe Analysis of Syntenic Orthologs to prioritize Natural Product-Biosynthetic Gene Clusters
+CORASON is a visual tool that identifies gene clusters that share a common genomic core and reconstructs multi-locus phylogenies of these gene clusters to explore their evolutionary relatioinships.
 
-### CORe Analysis of Syntenic Orthologs to prioritize Natural Product-Biosynthetic Gene Cluster
-CORASON is a visual tool that searchs for gene clusters similar to a given one, if exists a genomic core on this clusters CORASON finds it and sort them phylogenetically according to its core.  
-
-**Input:** query gen and RAST genome database.  
-**Output:** SVG graph with clusters sorted according to core genomic tree from clusters.  
+**Input:** query gene and RAST genome database.  
+**Output:** SVG graph with clusters sorted according to the multi-locus phylogeny of the common core.  
 
 CORASON was developed to find and prioritize biosynthetic gene clusters, but can be used for any kind of clusters.  
 
 #### Advantages
 -**SVG graphs** Scalable graphs that allows metadata easy display.  
--**Interactive** CORASON is not an static database, it allows you to explore your own genomes.  
--**Reproducibility** CORASON runs on docker, that allows to always conduce the same analysis even if you change your Linux/perl/blast/muscle/Gblocks/quicktree distributions.  
+-**Interactive** CORASON is not a static database, it allows you to explore your own genomes.  
+-**Reproducibility** CORASON runs on docker, which allows to always perform the same analysis even if you change your Linux/perl/blast/muscle/Gblocks/quicktree distributions.  
 
 ## CORASON Installation guide
 
@@ -27,8 +21,8 @@ CORASON was developed to find and prioritize biosynthetic gene clusters, but can
 
 Follow the steps, and type the commands into your terminal, do not type $.  
 
-### 1. Install docker engine
-CORASON runs on docker, if you have docker engine installed skip this step. This are Linux minimal docker installation guide, if you don't use Linux or you look for a detailed tutorial on Linux/Windows/Mac Docker engine installation please consult [Docker getting Starting] (https://docs.docker.com/linux/step_one/).  
+### 0. Install docker engine
+CORASON runs on docker. If you have docker engine installed, please skip this step. This is a Linux minimal docker installation guide, if you don't use Linux or you are looking for a detailed tutorial on Linux/Windows/Mac Docker engine installation please consult [Docker getting Starting] (https://docs.docker.com/linux/step_one/).  
 
 `$ curl -fsSL https://get.docker.com/ | sh `  
 *if you don’t have curl search on this document curl installation  
@@ -46,13 +40,13 @@ Test your docker engine with the command:
 `$ docker pull nselem/evodivmet:latest  `  
 
 ##### Important  
-`docker pull ` may be slow depending on your internet connection, because nselem/evodivmet docker-image is being downloaded, its only this time won’t happen again.
+`docker pull ` may be slow depending on your internet connection, because the large nselem/evodivmet docker-image is being downloaded. This only needs to happen once.
 
 ### 2 Run CORASON
 #### 2.1 Set your database  
 Create an empty directory that contains your [[Input Files]]: RAST-genome data base, Rast_Ids file and file.query  
 `$ mkdir mydir`  
-place inside my dir your files:  
+place your files inside the directory _mydir_ :  
 ![mydir.png](https://github.com/nselem/EvoDivMet/blob/master/IMAGES/mydir3.png)  
 GENOMES    (dir)  
 RAST_IDs   (tab separated file)  
@@ -62,8 +56,8 @@ file.query (aminoacid fasta file) Save as many queries as you wish to process.
 
 `$ docker run --rm -i -t -v $(pwd):/usr/src/CORASON  nselem/evodivmet /bin/bash`
 
-**$(pwd)** points to your working directory were you store your query file and GENOMES database.  
-Use absolute paths, if you don’t know the path to your dir, place yourself on your directory and type on the terminal  
+**$(pwd)** points to your working directory where you store your query file and GENOMES database.  
+Use absolute paths. If you do not know the path to your current working directory type on the terminal  
 `$ pwd`  
 **/usr/src/CORASON** is fixed at the docker images, you should always use this name.  
 
@@ -78,16 +72,16 @@ You can also run corason from the beggining of the image without the interactive
 
 `docker run --rm -v $(pwd):/usr/src/CORASON nselem/evodivmet:latest /root/EvoDivMet/CORASON/SSHcorason.pl yourquery.query yourRAST.Ids yourspecial_org`
 
-### 2.4 Read your results ! 
+### 2.4 Read your results! 
 Outputs will be on the new folder /mypath/mydir/query   
 - query.svg  SVG file with clusters similar to you query sorted phylogenetically  
 - query_Report   Functional cluster genomic core report.
 - *.tre Phylogenetic tree of the genomic cluster core.
 
 ![Results.png](https://github.com/nselem/EvoDivMet/blob/master/IMAGES/yourquery2.png)  
-On this example query file was yourquery.query and input directory was /home/mydir, output files are located on /home/mydir/yourquery  
+In this example the query file was yourquery.query and the input directory was /home/mydir. Output files are located in /home/mydir/yourquery  
 ### Links  
-Code and docker file located at:  
+The CORASON source code and docker file are located at:  
 [Code] (https://github.com/nselem/EvoDivMet  )  
 [Docker] (https://hub.docker.com/r/nselem/evodivmet/  )  
 
@@ -97,11 +91,4 @@ Code and docker file located at:
 - `$ sudo apt-get install curl`
 ### Example  
 ### Convert data
-perl gbkIndex.pl yourgbkfolder
-### To do list
-- [ ] Create a direct access with Logo
-- [x] Redirect process to a different folder so multiple runs can be performed without data mess
-- [1/2] Write the tutorial
-- [ ] Write a myRast Docker file
-- [ ] Learn Docker-Apache to link with Evomining
-- [ ] Test with many users
+perl gbkIndex.pl yourgbkfolder  
