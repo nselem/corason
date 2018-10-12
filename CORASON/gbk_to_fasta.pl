@@ -1,4 +1,6 @@
-#!/bin/perl 
+#!/usr/bin/perl 
+use lib '/usr/local/lib/perl5/site_perl/5.20.3';
+
 ## I want to extract CDS entrys and ids from a geneBankFile
 ## coordinates from each CDS and direction
 ## this file input is an NCBI file, a name of the file and the proposed rastid and 
@@ -18,8 +20,8 @@ my $species_name="species";
 #system("mkdir CORASON_GENOMES");
 
 $seqio_obj = Bio::SeqIO->new(-file => "$dir/$file",  -format => "genbank" );
-my $out= Bio::SeqIO->new(-file=> ">CORASON_GENOMES/$number\.faa",-format=> 'Fasta');
-my $txt=open(FILE,">CORASON_GENOMES/$number\.txt") or die $!;
+my $out= Bio::SeqIO->new(-file=> ">GENOMES/$number\.faa",-format=> 'Fasta');
+my $txt=open(FILE,">GENOMES/$number\.txt") or die $!;
 
 #print FILE "contig_id\tfeature_id\ttype\tlocation\tstart\tstop\tstrand\tfunction\tspecies\tfigfam\tevidence_codes\tnucleotide_sequence\taa_sequence\n";
 print FILE "contig_id\tfeature_id\ttype\tlocation\tstart\tstop\tstrand\tfunction\tlocus_tag\tfigfam\tspecies\tnucleotide_sequence\tsequence_accession\n";

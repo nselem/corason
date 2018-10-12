@@ -1,3 +1,5 @@
+#!/usr/bin/perl
+use lib '/usr/local/lib/perl5/site_perl/5.20.3';
 use strict;
 use Bio::SeqIO;
 use Bio::Species;
@@ -21,25 +23,29 @@ cleaning();
 #################### main ##########################if
 my $count=100000;
 foreach my $file ( @files){
-	#print "File $file\n";
-	call_transform($file,$dir,$count);
-	$count++;
+	chomp $file; #print "File $file\n";
+	my $ext= substr $file, -3;
+#	print "$file y extension $ext\n";
+	if ( $ext eq "gbk"){
+#		print "file $file will be proceesed\n";
+		call_transform($file,$dir,$count);
+			$count++;
+		}
 }
 
 ################################### SUBS #####################################
 sub cleaning{
 
-	if (-e "CORASON_GENOMES"){
+	if (-e "/usr/src/CORASON/GENOMES"){
 		#print "cleaning";
-		system("rm -r CORASON_GENOMES");
-		system("rmdir CORASON_GENOMES");
+		system("rm -r /usr/src/CORASON/GENOMES");
+		system("rmdir /usr/src/CORASON/GENOMES");
 		}
-		system("mkdir CORASON_GENOMES");
+		system("mkdir /usr/src/CORASON/GENOMES");
 	if (-e "Corason_Rast.IDs"){
 		print "cleaning old files....\n";
 		system("rm -r Corason_Rast.IDs");
 		}
-	system("mkdir CORASON_GENOMES");	
 	}
 #__________________________________________________________
 sub call_transform{
@@ -89,8 +95,8 @@ sub call_transform{
 #		print  "$number\t666666.$number\t$org $accesion \n";
 		print  IDS "$number\t666666.$number\t$file \n";
 
-		print(" perl gbk_to_fasta.pl $dir $file $number\n");
-		system(" perl gbk_to_fasta.pl $dir $file $number\n");
+		print(" gbk_to_fasta.pl $dir $file $number\n");
+		system("gbk_to_fasta.pl $dir $file $number\n");
 	#}
 	close IDS;
 	#return $cont;

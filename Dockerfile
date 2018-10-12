@@ -30,7 +30,7 @@ RUN git clone https://github.com/vim/vim.git
 RUN cd vim && ./configure && make VIMRUNTIMEDIR=/usr/share/vim/vim74 && make install
 #_________________________________________________________________________________________________
 ## CORASON
-RUN git clone https://github.com/nselem/EvoDivMet
+RUN git clone https://github.com/nselem/corason
 RUN mkdir /opt/CORASON
 ####__________________________________________________________________
 # Installing GBlocks
@@ -42,5 +42,5 @@ ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_
 RUN mkdir /usr/src/CORASON
 WORKDIR /usr/src/CORASON 
 ## Como paso variables ?
-CMD ["perl", "/root/EvoDivMet/CORASON/SSHcorason.pl"]
+CMD ["perl", "/root/EvoDivMet/CORASON/corason.pl"]
 ## Volumen para escribir la salida

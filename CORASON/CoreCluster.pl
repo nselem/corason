@@ -221,7 +221,7 @@ close REPORTE;
 
 print "Cleaning temporary files\n";
 cleanFiles($outname);
-
+system("mv $outname /home/output/");
 print "Done\n";
 print "Have a nice day\n\n";
 exit;
