@@ -4,7 +4,7 @@ if [[ $# -eq 0 ||  $1 == "-h" ||  $1 == "--help" ]]; then
 	docker run \
 	--detach=false \
 	--rm \
-	nselem/evodivmet corason.pl\
+	nselem/corason corason.pl\
     	$@
 else
 	set -o errexit
