@@ -1,4 +1,5 @@
 #!/bin/bash
+<<<<<<< HEAD
 ######################################################################################################
 # author nselem84@gmail.com
 # _________________________________________________________________________________________________
@@ -26,25 +27,32 @@
 # 
 ########################################################################################################
 
+=======
+#
+#      This script launches corason docker ..............................
+#-------------------------------------------------------------------------
+##   help from docker ### at -h or --help 
+>>>>>>> aa5e6465083f2bcc5f94e8d5861f4ff7815c47c3
 if [[ $# -eq 0 ||  $1 == "-h" ||  $1 == "--help" ]]; then
 	docker run \
 	--detach=false \
 	--rm \
-	nselem/evodivmet corason.pl\
+	nselem/corason corason.pl\
     	$@
+	## If it has parameters  
 else
 	set -o errexit
 	set -o nounset
-
+        ## getting real path  
 	function realpath() {
     	echo $(readlink -f $1 2>/dev/null || python -c "import sys; import os; print(os.path.realpath(os.path.expanduser(sys.argv[1])))" $1)
 	}
 
 	# handle input query file (Only one enzyme in fasta)
 	if [[ ! -f ${1} ]]; then echo "File $1 does not exists"; exit ;fi
-	readonly QUERY_FILE=$(basename $1)
-	readonly QUERY_DIR=$(dirname $(realpath $1))
-#	echo "input query file: ${QUERY_FILE}"
+	readonly QUERY_FILE=$(basename $1)   ## QUERY_FILE = query enzyme in fasta  
+	readonly QUERY_DIR=$(dirname $(realpath $1))  ## dir where query file is located   
+#	echo "input query file: ${QUERY_FILE}"   
 #	echo "input query dir: ${QUERY_DIR}"
 	shift
 
