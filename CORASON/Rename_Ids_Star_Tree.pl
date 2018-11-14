@@ -6,9 +6,12 @@ my $verbose;
 my $rast_ids=$ARGV[0];
 my $outname=$ARGV[1];
 
-`rm RightNames.txt`;
+`rm $outname/RightNames.txt`;
 open (NAMES,"$rast_ids") or die "Couldn't open NAMES file $!";
 open (SEQUENCE,"$outname/SalidaConcatenada.txt") or die "Couldn't open $outname/SalidaConcatenada.txt file $!";
+#print ">>$outname/RightNames.txt or die Couldn't open $outname/RightNames file $! \n";
+
+
 open (BAYES,">>$outname/RightNames.txt") or die "Couldn't open $outname/RightNames file $!";
 
 my %SEQUENCES;

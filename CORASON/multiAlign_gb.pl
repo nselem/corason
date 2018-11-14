@@ -6,32 +6,31 @@ no warnings 'experimental::smartmatch';
 
 ###
 
-my $dir2=&Cwd::cwd();
-my $name=pop @{[split m|/|, $dir2]};                       ##Name of the group (Taxa, gender etc)
+my $name="CORASON";                       ##Name of the group (Taxa, gender etc)
 my $infile=$name;
 my $NUM2=$ARGV[0];
 my $list=$ARGV[1];
 my $outname=$ARGV[2];
-$dir2=$dir2."/".$outname;
 
-my $Working_dir="$dir2/$infile";
+my $Working_dir="$outname/$infile";
+print "\n $Working_dir \n";
 
-if (-e "$dir2/$infile/ALIGNMENTS_GB/") {system "rm -r $dir2/$infile/ALIGNMENTS_GB/";}
-system "mkdir $dir2/$infile/ALIGNMENTS_GB/";
+if (-e "$outname/$infile/ALIGNMENTS_GB/") {system "rm -r $outname/$infile/ALIGNMENTS_GB/";}
+system "mkdir $outname/$infile/ALIGNMENTS_GB/";
 
-my $TOTAL=`wc -l < $dir2/$infile/lista.ORTHOall`;
+my $TOTAL=`wc -l < $outname/$infile/lista.ORTHOall`;
 
 my @lista0=split(",",$list); ## MINI genomes list
 my @sorted_clust = sort @lista0; ## Sorted MINI genomes list
 
 for(my $gen=1;$gen<=$TOTAL;$gen++){
-	print "&align $gen,$NUM2,$Working_dir,@sorted_clust";  ## Each gene will be aligned
+	print "\n&align $gen,$NUM2,$Working_dir,@sorted_clust\n";  ## Each gene will be aligned
 	&align($gen,$NUM2,$Working_dir,@sorted_clust);  ## Each gene will be aligned
 	}
 
-system("mkdir $dir2/$infile/CONCATENADOS");
+system("mkdir $outname/$infile/CONCATENADOS");
 
-print "Gblocks and muscle have finished\n";
+print "\nGblocks and muscle have finished\n";
 ############################################################################################ 
 ####### subs
 ###############################################################################################
@@ -89,7 +88,7 @@ sub align{
 	close ORDEN;
 	#print @content;  ### Anaaa que eran las opciones del Gblocks??
 	system "Gblocks $Working_dir/ALIGNMENTS_GB/$gen.orden.muscle -b4=5 -b5=n -b3=5";
-	system("rm $dir2/$infile/ALIGNMENTS_GB/$gen.orden.muscle-gb.htm");
+	system("rm $Working_dir/ALIGNMENTS_GB/$gen.orden.muscle-gb.htm");
 	close(FILE2);
 }
 ############################################

@@ -65,6 +65,7 @@ if($corebool != 0){
 print "SearchAminoacidsFromCore.pl $lista $outname\n";
 system("SearchAminoacidsFromCore.pl $lista $outname");
 
+
 print "ReadReaction $lista $num $outname\n";
 system("ReadReaccion.pl $lista $num $outname");
 }

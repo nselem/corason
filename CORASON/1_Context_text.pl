@@ -60,8 +60,10 @@ die "$0 requires the list argument (--list\n" unless $list;  ## A genome list is
 die "$0 requires the rast_ids argument (--rast_ids\n" unless $rast_ids;  ## A genome names list is mandatory
 
 my $query_name=$queries;			
-$query_name=~s/.query//; # $outname
-system("cp $queries $query_name/$queries");
+#$query_name=~s/.query//; # $outname
+my $query_dir="/home/output/$query_name-output"; # $outname
+system("mkdir $query_dir");
+system("cp $queries $query_dir/$queries");
 if ($verbose){print "Your special org is $special_org\n";}
 my %query=ReadFile($queries);
 my $DB="ProtDatabase";		##DataBAse Name
@@ -69,6 +71,7 @@ my @LISTA=split(",",$list);
 my $eSeq=$e_value; 			## Evalue principal query
 
 printVariables();
+
 #______________________________________
 #########################################################################################################
 ## Reading antismash file if exists
@@ -78,12 +81,12 @@ printVariables();
 ################################################################################################################# 
 
 				print "I will search homologous genes in organisms\n";
-`mkdir $query_name/MINI`;
+`mkdir $query_dir/MINI`;
 #print "Parameters\n";
 if($MakeDB){
 	$MakeDB=1;
 	print "I will create a Database with selected genomes\n";
-	$DB="$query_name\/temDatabase";
+	$DB="$query_dir\/temDatabase";
 	}
 else{
 	$MakeDB=0;	
@@ -91,15 +94,19 @@ else{
 	}
 
 
-MakeBlast($query_name,$MakeDB,$type,$query_name,$eSeq,$DB,$bitscore,$num,$genome_dir,$rast_ids,@LISTA); 	
+
+MakeBlast($query_dir,$MakeDB,$type,$query_name,$eSeq,$DB,$bitscore,$num,$genome_dir,$rast_ids,@LISTA); 	
 				## Search query by blast in all the other organisms
 				## Save blast results on a $name file.BLASt
+
 my %Hits; 			
 my %AllHits;
-BestHits($query_name,$query_name,\%Hits,\%AllHits);
+BestHits($query_dir,$query_name,\%Hits,\%AllHits);
 				## BestHits  ##Read Blast file created by MakeBlast sub whit at least $eSeq as evalue cutoff
 				## Stores best hits on Hash Hits  BBBYYYY identity
 				#refHits->{$name}{$org}=[$percent,$peg];
+
+
 print "Looking for hits\n";
 #		foreach my $key (keys %Hits){ print "$key -> $Hits{$key}\n"; }
 
@@ -120,13 +127,11 @@ my $eClust=$e_cluster;
 my %CLUSTER;
 				print "Searching for homologous gene in clusters \n";
 #### 
-my %CLUSTERcolor=BlastColor($query_name,$PEG,$special_org,$cluster_radio,$num,$eClust,$DB,$genome_dir,$rast_ids,\%CLUSTER,@LISTA);
+my %CLUSTERcolor=BlastColor($query_dir,$query_name,$PEG,$special_org,$cluster_radio,$num,$eClust,$DB,$genome_dir,$rast_ids,\%CLUSTER,@LISTA);
 print "I have colored genes according to homology\n";		
 ########################################################################################################################
 
 print "Now I will produce the *.input file\n";
-#print "Enter to continue\n";
-#my $pause= <STDIN>;
 
 for my $orgs (sort keys %{$AllHits{$query_name}}){
 		foreach my $hit(@{$AllHits{$query_name}{$orgs}}){
@@ -135,15 +140,15 @@ for my $orgs (sort keys %{$AllHits{$query_name}}){
 			my $peg=$sp[0];
 			my $percent=$sp[1];
 			#print "Org->$orgs, Hit ¡$peg! percent $percent\n";
-			ContextArray($query_name,$orgs,$peg,$special_org,$percent,\%ORGANISMS,\%AllHits,\%SMASH);
+			ContextArray($query_dir,$orgs,$peg,$special_org,$percent,\%ORGANISMS,\%AllHits,\%SMASH);
 		}
 }
 
 
 if ($verbose){print "$query_name, $special_org $PEG\n";}
-`rm $query_name/Cluster*.*.*`;
-`rm $query_name/Cluster*.*`;
-if($MakeDB==1){`rm $query_name/temDatabase.*`;}
+`rm $query_dir/Cluster*.*.*`;
+`rm $query_dir/Cluster*.*`;
+if($MakeDB==1){`rm $query_dir/temDatabase.*`;}
 #########################################################################################################################
 ##########################################################################################################################
 
@@ -379,8 +384,9 @@ sub getGenesContigReference{
 
 #_____________________________________________________________________________________
 sub header{
+	my $query_dir=shift;
 	my @LISTA=@_;
-	open(OUT, ">Concatenados.fna") or die "Couldn't open Concatenados.fna";
+	open(OUT, ">$query_dir/Concatenados.fna") or die "Couldn't open Concatenados.fna";
 
 	foreach $num (@LISTA){
 		#print "num $num\n";
@@ -469,20 +475,22 @@ sub MakeBlast{
 		if ($type eq 'nuc'){
 			print"$type type\n";
 			print"Doing blast nucleotide database\n";
-			header(@LISTA);
-			makeDB($query_name,$DBname,$type,@LISTA);
+			header($query_original,@LISTA);
+			makeDB($query_original,$DBname,$type,@LISTA);
 			blastnSeq($evalueL,$query_name);	
 			}
 	
 		elsif($type eq 'prots'){
 			print"$type type\n";
 			print "Aminoacid data will be analised\n";
-			`header.pl $genome_dir $rast_ids $query_name`;
+			#print "header.pl $genome_dir $rast_ids $query_original\n";
+			`header.pl $genome_dir $rast_ids $query_original`;
 
 
-			print "Making blast db\n";
-			makeDB($query_name,$DBname,$type,@LISTA);
-
+			#print "Making blast db\n";
+			#print "pausei before makeDB\n";
+			#my $pause=<STDIN>;
+			makeDB($query_original,$DBname,$type,@LISTA);
 			blastpSeq($query_original,$evalueL,$query_name,$DBname,$bitscore);	
 
 
@@ -559,7 +567,7 @@ sub blastpSeq{
 
 #	if ($verbose) {print"Now we will start the blast  with evalue $e name $name database $DBname and bitscore $bitscore\n";}
 	if (-e 	"$query_original/$query_name.parser"){unlink ("$query_original/$query_name.parser");}	if (-e 	"$query_original/$query_name.BLAST"){unlink ("$query_original/$query_name.BLAST");}
-	`blastp -db $DBname.db -query $query_original/$query_name.query -outfmt 6 -evalue $e -num_threads 12 -out $query_original/$query_name.BLAST.pre`;
+	`blastp -db $DBname.db -query $query_original/$query_name -outfmt 6 -evalue $e -num_threads 12 -out $query_original/$query_name.BLAST.pre`;
 	open (PREBLAST,"$query_original/$query_name.BLAST.pre") or die "Could not open $query_original/$query_name.BLAST.pre $!";
 	open (BLAST,">$query_original/$query_name.BLAST") or die "Could not open $query_original/$query_name.BLAST $!";
 #	open (PARSER,">$query_original/$query_name.PARSER") or die "Could not open $query_original/$query_name.BLAST $!";  #Salva el fasta
@@ -583,7 +591,7 @@ sub blastpSeq{
 	#print "This is a hit ¡$hit!\n";
 	}
 
-	`blastp -db $DBname.db -query $query_original/$query_name.query -evalue $e -num_threads 4 -out $query_original/$query_name.parser.pre` ;
+	`blastp -db $DBname.db -query $query_original/$query_name -evalue $e -num_threads 4 -out $query_original/$query_name.parser.pre` ;
 	open (PREPARSER,"$query_original/$query_name.parser.pre") or die "Could not open $query_original/$query_name.parser.pre $!";
 	open (PARSER,">$query_original/$query_name.parser") or die "Could not open $query_original/$query_name.parser $!";
 	my %SEQ;
@@ -710,6 +718,7 @@ my $queries=shift;
 
 #________________________________________________________________________________
 sub BlastColor{
+	my $query_dir=shift;
 	my $query_name=shift;
 	my $peg=shift;
 	my $special_org=shift;
@@ -743,16 +752,16 @@ sub BlastColor{
 
                 ## print filesnamed Cluster_peg.query with sequence of the neighbour
                 if($sequence ne ""){
-                        open(QUERY,">$query_name/Cluster$i.query") or die"Could not open cluster file Cluster$i.query $! \n ";
+                        open(QUERY,">$query_dir/Cluster$i") or die"Could not open cluster file $query_dir/Cluster$i $! \n ";
                         print QUERY ">$hit\n$sequence";         
                         #print ">$hit\n$sequence";
                         close QUERY;
                         }
 		## Do blast for each one
                 my $nameClust="Cluster$i";
-                MakeBlast($query_name,0,$type,$nameClust,$eClust,$DBname,0,$num,$genome_dir,$rast_ids,@LISTA);
+                MakeBlast($query_dir,0,$type,$nameClust,$eClust,$DBname,0,$num,$genome_dir,$rast_ids,@LISTA);
 		                ## Save BEst Hits in a hash
-                my %HitsClust; my %AllHitsClust; BestHits($query_name,$nameClust,\%HitsClust,\%AllHitsClust);
+                my %HitsClust; my %AllHitsClust; BestHits($query_dir,$nameClust,\%HitsClust,\%AllHitsClust);
 
                 ## %CLUSTER{$peg}={peg1_org1,peg2_org2,...}
                 $refCLUSTER->{$i}=[];

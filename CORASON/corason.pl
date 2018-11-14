@@ -105,13 +105,16 @@ print "\n$0 requires the queries argument (--q\n\n" and print color('reset') and
 
 	print "\n$0 requires the special_org argument (--s\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki at:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $special_org;  ## A genome list is mandatory
 
+
+
+### GBK to fasta inputs  
 if($gbk){
 	system("gbkIndex.pl CORASON_GENOMES");
 	$rast_ids="Corason_Rast.IDs";
 	my $special=`grep -w $special_org Corason_Rast.IDs|cut -f1`;
 	$special_org= $special;
 	chomp $special_org;
-	print "especial $special_org";
+	print "special $special_org";
 #	exit;
 }
 else{

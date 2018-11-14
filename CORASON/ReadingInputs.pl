@@ -65,6 +65,7 @@ chop $list;
 
 print "$relevant\t$list";
 open (FILE,">$outname/Frequency") or die "Couldnt open file Frequency $!";
+
 #open (NEW,">globals2.pm") or die "Couldnt open file globals $!";
 #print "Modificando el modulo\n";
 

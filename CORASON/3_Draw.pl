@@ -18,6 +18,7 @@ use Cwd;
 my $rescale=$ARGV[0]; 		## Arrow horizontal size, greater values of this parameter would allow to observe more genes
 my @CLUSTERS=split(',',$ARGV[1]); 	## Read all input Uncomment to read all
 my $outname=$ARGV[2];
+my $queries=$ARGV[3];
 my $nClust=scalar @CLUSTERS; 	#number of cluster (until now one per organism)
 				#3 Used to draw lines
 my $w=800;  			## Size of the window
@@ -66,7 +67,9 @@ close OUT;
 `perl -p -i -e 's/&//' $outname/Contextos.svg`;
 `perl -p -i -e 'if(/\<polygon/)\{s/title=\"/\>\n\<title\>/g;if(m{\/\>\$})\{s{\" \/\>}{\<\/title\>\<\/polygon\>};\}\}else\{if((!/^\t/) and m{\/\>})\{s{\" \/>}{<\/title><\/polygon>};\}\}' $outname/Contextos.svg`;
 
-my $file = "$outname/$outname\_tree.svg";
+my $file = "$outname/$queries\_tree.svg";
+print "file is $file \n";
+
 my $document2 = do {
     local $/ = undef;
     open my $fh, "<", $file
@@ -107,8 +110,7 @@ sub DrawFrequencies{
 	my $nClust=shift;
 	my $refColorNames=shift;
 
-	open (FREQ,"$outname/Frequency"), or die "couldn open frequency file$! \n ";
-
+	open (FREQ,"$outname/Frequency"), or die "couldn open frequency file $outname/Frequency $! \n ";
 	my $barNum=10;
 	foreach my $line (<FREQ>){
 		my @st=split('\t',$line);
@@ -233,6 +235,7 @@ sub arrow{
 	
 
   #start arrow end arrow organism number direction
+  ## u is x, v is y
   my ($u1,$u2,$u3,$u4,$u5,$v1,$v2,$v3,$v4,$v5);
   ##up start
   $u1=$start; $v1=$refYCOORD->[$org-1]-$grueso/2;
@@ -260,17 +263,23 @@ sub arrow{
   else{
       #pick
       $u4=$end;  $v4=$refYCOORD->[$org-1];
-	if($start-$end>=$grueso/2){
+	print "print start - end $start-$end grueso entre dos $grueso/2";
+	if(abs($start-$end)>=$grueso/2){
       		##down left
- 	     $u3=$end+$s/10+$grueso/2; $v3=$refYCOORD->[$org-1]+$grueso/2;
+ 	     $u3=$end-$s/10-$grueso/2; 
+	     $v3=$refYCOORD->[$org-1]+$grueso/2;
 	      #up rigth
-      		$u5=$end+$s/10+$grueso/2; $v5= $refYCOORD->[$org-1]-$grueso/2;
+      		$u5=$end-$s/10-$grueso/2; 
+		$v5= $refYCOORD->[$org-1]-$grueso/2;
+		#print "v1 $v3, v4 $v4, v5 $v5 \n";
 		}
-	else{
-      		##down rigth
+	else{    #id the arrow is reversed and too small	
+		#down rigth
       		$u3=$u1;  $v3=$v1;
      		##up rigth
      		$u5=$u2; $v5=$v2;
+#		print "estoy aqui \n";
+#		print "v3 $v3, v4 $v4, v5 $v5 \n";
 	}
   }  
 

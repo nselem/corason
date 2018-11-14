@@ -49,11 +49,10 @@ my @files;
 #my $directory =  '/home/fbg/lab/nselem/RASTtemp/NUCLEOTIDOS';
 ###############################################################################################
 
-my $dir=&Cwd::cwd();
-my $name=pop @{[split m|/|, $dir]};                       ##Name of the group (Taxa, gender etc)
+my $name="CORASON";                       ##Name of the group (Taxa, gender etc)
 my $infile=$name;
 my $outname=$ARGV[0];
-$dir=$dir."/".$outname;
+my $dir=$outname;
 
 my $directory = "$dir/$infile/ALIGNMENTS_GB"; 
 print "directory $directory will be open\n";

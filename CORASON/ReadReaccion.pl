@@ -10,7 +10,8 @@ no warnings 'experimental::smartmatch';
 #####################################
 
 my $dir=&Cwd::cwd();
-my $NAME=pop @{[split m|/|, $dir]};                       ##Name of the group (Taxa, gender etc)
+#my $NAME=pop @{[split m|/|, $dir]};                       ##Name of the group (Taxa, gender etc)
+my $NAME="CORASON";                       ##Name of the group (Taxa, gender etc)
 #my $infile=$name;
 #my $outdir="$dir2/$infile";
 my $list=$ARGV[0];
@@ -41,7 +42,7 @@ sub readList;
 #my $list=listas($NUM2,$Lista);  #$list stores in a string the genomes that will be used
 my @LISTA=split(",",$list);
 
-my $FUNCTION_PATH="$dir/$outname/$NAME/FUNCTION";
+my $FUNCTION_PATH="$outname/$NAME/FUNCTION";
 unlink( $FUNCTION_PATH);
 `rm -r $FUNCTION_PATH`;
 `mkdir $FUNCTION_PATH`;
@@ -49,13 +50,13 @@ unlink( $FUNCTION_PATH);
 
 
 foreach my $num (@LISTA){
-	EscribeSalida($outname,$dir,$num);
+	EscribeSalida($outname,$num);
 	}
 ####################################################################
 ####################################################################
 sub EscribeSalida {
 	my $outname=shift;
-	my $dir=shift;
+
 	my $num=shift;
 	my %FIG; #Fig, Category, SubCategory # Subsystem #Role 
 	my @CORE;
@@ -65,11 +66,11 @@ sub EscribeSalida {
 	my $org=$sp[0];
 	#print "Numero de peg de cluster #$num# Organismo a buscar en txt #$org# \n";
 
-	my $ReactionFile="$dir/GENOMES/$org\.txt";  ## File cvs from RAST with ALL the reactions (From the spreadsheet reaction)
+	my $ReactionFile="GENOMES/$org\.txt";  ## File cvs from RAST with ALL the reactions (From the spreadsheet reaction)
 	#my $FigsFile="$dir/$num.figs"; ## File with the figs or feachures id for wich we want the function
-	my $genome_file="$dir/$outname/MINI/$num.faa";
+	my $genome_file="$outname/MINI/$num.faa";
 
-	my $core_file="$dir/$outname/$NAME/FASTAINTERporORG/$num.interFastatodos";
+	my $core_file="$outname/$NAME/FASTAINTERporORG/$num.interFastatodos";
 	#print "El core $core_file $dir/$NAME/FASTAINTERporORG/$num.interFastatodos \n";
 	#print"En lista $dir/$NAME/FASTAINTERporORG/$num.interFastatodos\n";
 	#print "$genome_file\n";	
@@ -254,8 +255,8 @@ sub mainFig{  ## Returns the function for each gene (Sorted by Fig number)
 	my @SORTED;
 	my %PEGS;
 
-	if ($core==1){	open (OUTFILE,">$dir/$outname/$NAME/FUNCTION/$num.core.function") or die "Could not open CORE function file $dir/$outname/$NAME/FUNCTION/$num.core.function $!";}
-	if ($core==0){	open (OUTFILE,">$dir/$outname/$NAME/FUNCTION/$num.complement.function") or die "Could not open COMPLEMENT function file $dir/$outname/$NAME/FUNCTION/$num.complement.function $!";}
+	if ($core==1){	open (OUTFILE,">$outname/$NAME/FUNCTION/$num.core.function") or die "Could not open CORE function file $outname/$NAME/FUNCTION/$num.core.function $!";}
+	if ($core==0){	open (OUTFILE,">$outname/$NAME/FUNCTION/$num.complement.function") or die "Could not open COMPLEMENT function file $outname/$NAME/FUNCTION/$num.complement.function $!";}
 	
 
 

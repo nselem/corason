@@ -51,11 +51,10 @@ my @keys;    ### Aqui guardare los nombres de los organismos
 my %HASH;    ### Aqui se guardaran las secuencias concatenadas
 my @files;   ######### Arreglo que contendrá los archivos del directorio que tengan nombre numerico
 
-my $dir2=&Cwd::cwd();
-my $name=pop @{[split m|/|, $dir2]};                       ##Name of the group (Taxa, gender etc)
+my $name="CORASON";                       ##Name of the group (Taxa, gender etc)
 my $infile="$name";
 my $outname=$ARGV[0];
-$dir2=$dir2."/".$outname;
+my $dir2=$outname;
 my $outdir="$dir2/$infile";
 my $directory =  "$dir2/$infile/CONCATENADOS";
 

@@ -24,7 +24,7 @@ my $out= Bio::SeqIO->new(-file=> ">GENOMES/$number\.faa",-format=> 'Fasta');
 my $txt=open(FILE,">GENOMES/$number\.txt") or die $!;
 
 #print FILE "contig_id\tfeature_id\ttype\tlocation\tstart\tstop\tstrand\tfunction\tspecies\tfigfam\tevidence_codes\tnucleotide_sequence\taa_sequence\n";
-print FILE "contig_id\tfeature_id\ttype\tlocation\tstart\tstop\tstrand\tfunction\tlocus_tag\tfigfam\tspecies\tnucleotide_sequence\tsequence_accession\n";
+print FILE "contig_id\tfeature_id\ttype\tlocation\tstart\tstop\tstrand\tfunction\tlocus_tag\tfigfam\tspecies\tnucleotide_sequence\tamino_acid\tsequence_accession\n";
 #contig_id LOCUS  falta
 # feature_id rast YA
 #\ttype\tlocation\tstart\tstop\tstrand\t YA
@@ -82,7 +82,7 @@ while (my $seq_object = $seqio_obj->next_seq ){
 			 for my $func ($feat_object->get_tag_values('product')){
 							$product=$func; }}
 
-                        	print FILE "$LOCUS\tfig|666666.$number.peg.$cont\ttype\tlocation\t$start\t$end\t$dir\t$product\t$accession\tfigfam\t$species_name\tnuc\t$val\n";
+                        	print FILE "$LOCUS\tfig|666666.$number.peg.$cont\ttype\tlocation\t$start\t$end\t$dir\t$product\t$accession\tfigfam\t$species_name\tnuc\t$prot\t$val\n";
               			my $seq = Bio::Seq->new(-seq => $prot, -display_id => "fig|666666.$number.peg.$cont");
                         	#my $pause=<STDIN>;
 				$out->write_seq($seq);	

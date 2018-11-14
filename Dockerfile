@@ -37,10 +37,11 @@ RUN mkdir /opt/CORASON
 RUN tar -xf /root/corason/CORASON/Gblocks_Linux64_0.91b.tar.Z -C /opt/ && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
 
 ######### PATHS ENVIRONMENT
-ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_1.1/bin:/root/EvoDivMet/CORASON:/opt/fasttree
+ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_1.1/bin:/root/corason/CORASON:/opt/fasttree
+RUN chmod +x /root/corason/CORASON/*pl  
 ## Moving to myapp directory
 RUN mkdir /usr/src/CORASON
 WORKDIR /usr/src/CORASON 
 ## Como paso variables ?
-CMD ["perl", "/root/EvoDivMet/CORASON/corason.pl"]
+CMD ["perl", "/root/corason/CORASON/corason.pl"]
 ## Volumen para escribir la salida

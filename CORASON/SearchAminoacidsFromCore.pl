@@ -8,18 +8,19 @@ use Cwd;
 #-LISTA DE GENOMAS
 #####################################
 
-my $dir2=&Cwd::cwd(); 
-my $name=pop @{[split m|/|, $dir2]};                       ##Name of the group (Taxa, gender etc)
-my $infile=$name;
+#my $dir2=&Cwd::cwd(); 
+my $dir2=""; 
+#my $name=pop @{[split m|/|, $dir2]};                       ##Name of the group (Taxa, gender etc)
+#my $infile=$name;
 my $list=$ARGV[0];
 my $outname=$ARGV[1];
-my $outdir="$dir2/$outname/$infile";
+my $outdir="$outname/CORASON";
 my $DesiredGenes="Core";
 
 #-----------------------------------------
 
 #print "Seleccionando unicos...\n";
-if (-e "$outname/$outdir"){
+if (-e "$outdir"){
 	system "rm -r $outdir/FASTAINTER/";
 	system "rm -r $outdir/FASTAINTERporORG/";
 	system "rm $outdir/lista.ORTHOall";
@@ -37,7 +38,7 @@ system "mkdir $outdir/FASTAINTER/";
 #readMINI($dir2,$listaname);
 
 ### Leer todos los minis
-my %MINIS=ReadFasta($outname,$dir2,$list);#INPUT los .bbh OUTPUT=interseccion de todos en  inter.todos
+my %MINIS=ReadFasta($outname,$list);#INPUT los .bbh OUTPUT=interseccion de todos en  inter.todos
 
 foreach my $PegId(keys %MINIS){	
 #	print "$PegId\n";
@@ -63,7 +64,6 @@ print "Done!\n";
 
 sub ReadFasta{
 	my $outname=shift;
-	my $dir=shift;
 	my $listaname=shift;
 	my %hashFastaH;
 
@@ -78,7 +78,7 @@ sub ReadFasta{
 	foreach my $mini(@ALL){
 		chomp($mini);
 		####### llena hash con encabezado-secuencia#####
-		open (CU, "$dir/$outname/MINI/$mini.faa") or die "Could not open $dir/$outname/$mini.faa $!\n\n";
+		open (CU, "$outname/MINI/$mini.faa") or die "Could not open $outname/$mini.faa $!\n\n";
 		#print "$dir/MINI/$mini.faa\n";
 		
   		while(<CU>){	
@@ -109,16 +109,15 @@ sub byOrthologues{
 	my $DesiredGenes=shift;
 	my $refMINIS=shift;
 	my $outdir=shift;
-	my $dir=shift;
+
 	#my %byOrtho;
 
-	open (ALL, "$dir/$outname/$DesiredGenes") or die "Couldnt open  $dir/$outname/$DesiredGenes \n$!";
+	open (ALL, "$outname/$DesiredGenes") or die "Couldnt open  $outname/$DesiredGenes \n$!";
 	my $count=1;
 
  	foreach my $linea(<ALL>){
 
 		open (FASTAINTER, ">$outdir/FASTAINTER/$count.interFastatodos") or die "Couldnt open file $count interFastatodos $!";
-  #		print "Writing: $outdir/FASTAINTER/$count.interFastatodo\n";
 		open (LISTA, ">>$outdir/lista.ORTHOall") or die "Cant print lista ortho all $!";
 		print LISTA "$count.interFastatodos \n";
 
@@ -152,8 +151,8 @@ sub byOrganism{
 	my $DesiredGenes=shift;
 	my $refMINIS=shift;
 	my $outdir=shift;
-	my $dir=shift;
-	open (ALL, "$dir/$outname/$DesiredGenes") or die "Couldn open $dir/$outname/$DesiredGenes \n$!";
+
+	open (ALL, "$outname/$DesiredGenes") or die "Couldn open $outname/$DesiredGenes \n$!";
 	my %Orgs;
 	my $count=1;
 

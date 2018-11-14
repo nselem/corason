@@ -1,4 +1,30 @@
 #!/bin/bash
+######################################################################################################
+# author nselem84@gmail.com
+# _________________________________________________________________________________________________
+# usage
+# ./run_corason -h   
+#	shows help menu
+#  
+# ./run_corason <queryEnzyme> <gbks_directory> <referenceBGC> <genomicVicinitySize>
+#  queryEnzyme			Fasta file with aminoacid sequence of the query enzyme  
+#
+#  gbks_directory 		Directory with genomes or BGCs in gbk format  
+#
+#  referenceBGC			File name of a gbk file that contains a BGC or genome 
+#				where the query enzyme belong.
+#
+#  genomicVicinitySize 		Optional, size of the genomic contexts. Default 20 genes (10 at each side)
+#
+#  __________________________________________________________________________________________________
+#
+#  docker run --volume --volume --volume nselem/corason -g -q queryEnzyme -s -o
+#
+#  QUERY_FILE   query enzyme   
+#  INPUT_FILE   reference cluster 
+#  OUTPUT_FILE  Output file
+# 
+########################################################################################################
 
 if [[ $# -eq 0 ||  $1 == "-h" ||  $1 == "--help" ]]; then
 	docker run \
