@@ -1,5 +1,4 @@
 #!/bin/bash
-<<<<<<< HEAD
 ######################################################################################################
 # author nselem84@gmail.com
 # _________________________________________________________________________________________________
@@ -17,42 +16,43 @@
 #
 #  genomicVicinitySize 		Optional, size of the genomic contexts. Default 20 genes (10 at each side)
 #
-#  __________________________________________________________________________________________________
+#   __________________________________________________________________________________________________
 #
 #  docker run --volume --volume --volume nselem/corason -g -q queryEnzyme -s -o
 #
 #  QUERY_FILE   query enzyme   
-#  INPUT_FILE   reference cluster 
+#  INPUT_FILE   reference cluster (relative path)
+#  GENOME_DIR   Genome gbks directory 
 #  OUTPUT_FILE  Output file
-# 
+#
+#  Pendientes  
+#  Dentro del docker llamar GENOME al GENOME_DIR
+#  Convertir de gbk a rast format
+#  poner ".query al enzyme file"
+#  Tomar el nombre del reference file 
+#  
+#
 ########################################################################################################
 
-=======
-#
-#      This script launches corason docker ..............................
-#-------------------------------------------------------------------------
-##   help from docker ### at -h or --help 
->>>>>>> aa5e6465083f2bcc5f94e8d5861f4ff7815c47c3
 if [[ $# -eq 0 ||  $1 == "-h" ||  $1 == "--help" ]]; then
 	docker run \
 	--detach=false \
 	--rm \
-	nselem/corason corason.pl\
+	nselem/evodivmet corason.pl\
     	$@
-	## If it has parameters  
 else
 	set -o errexit
 	set -o nounset
-        ## getting real path  
+
 	function realpath() {
     	echo $(readlink -f $1 2>/dev/null || python -c "import sys; import os; print(os.path.realpath(os.path.expanduser(sys.argv[1])))" $1)
 	}
 
 	# handle input query file (Only one enzyme in fasta)
 	if [[ ! -f ${1} ]]; then echo "File $1 does not exists"; exit ;fi
-	readonly QUERY_FILE=$(basename $1)   ## QUERY_FILE = query enzyme in fasta  
-	readonly QUERY_DIR=$(dirname $(realpath $1))  ## dir where query file is located   
-#	echo "input query file: ${QUERY_FILE}"   
+	readonly QUERY_FILE=$(basename $1)
+	readonly QUERY_DIR=$(dirname $(realpath $1))
+#	echo "input query file: ${QUERY_FILE}"
 #	echo "input query dir: ${QUERY_DIR}"
 	shift
 
@@ -96,7 +96,7 @@ else
 
 	#if [ ${INPUT_FILE} ${OUTPUT_FILE} ]; then
 	if [ ! -z ${INPUT_FILE} ] && [ ! -z ${OUTPUT_FILE} ]; then
-		echo bigscape is running now
+		echo corason is now running
 		echo	"docker run \
 	    	--volume ${QUERY_DIR}/${QUERY_FILE}:${CONTAINER_SRC_DIR}/${QUERY_FILE}:ro \ # query file org
 	    	--volume ${INPUT_DIR}:${CONTAINER_SRC_DIR}/CORASON_GENOMES:ro \ #genomes dir
@@ -109,6 +109,17 @@ else
 	    	-s ${INPUT_FILE} \
 	    	-o ${CONTAINER_DST_DIR}/${OUTPUT_FILE}\
     		$@ "
+
+		echo "docker run -i -t\
+		#docker run -i -t\
+	    	--volume ${QUERY_DIR}/${QUERY_FILE}:${CONTAINER_SRC_DIR}/${QUERY_FILE}:ro \
+	    	--volume ${INPUT_DIR}:${CONTAINER_SRC_DIR}/CORASON_GENOMES:ro \
+	    	--volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw \ 
+	    	--detach=false \
+	    	--rm \
+	    	--user=$(id -u):$(id -g) \
+	    	#nselem/corason /bin/bash
+	    	nselem/corason /bin/bash"
 	fi
 fi
 
