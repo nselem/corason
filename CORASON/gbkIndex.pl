@@ -38,10 +38,10 @@ sub cleaning{
 
 	if (-e "/usr/src/CORASON/GENOMES"){
 		#print "cleaning";
-		system("rm -r /usr/src/CORASON/GENOMES");
-		system("rmdir /usr/src/CORASON/GENOMES");
+		system("rm -r /home/output/CORASON/GENOMES");
+		system("rmdir /home/output/GENOMES");
 		}
-		system("mkdir /usr/src/CORASON/GENOMES");
+		system("mkdir /home/output/GENOMES");
 	if (-e "Corason_Rast.IDs"){
 		print "cleaning old files....\n";
 		system("rm -r Corason_Rast.IDs");
