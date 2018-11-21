@@ -318,6 +318,7 @@ sub cleanFiles{
         `# rm -r $outname_dir/*.faa`;
         `rm -r $outname_dir/*.blast`;
         `rm -r $outname_dir/*.txt`;
+        `rm -r $outname_dir/CORASON_GENOMES`;
 	`chmod +w $outname_dir $outname_dir/*.*`
         }
 #_____________________________________________________________________________________

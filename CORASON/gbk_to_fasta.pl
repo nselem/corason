@@ -20,8 +20,8 @@ my $species_name="species";
 #system("mkdir CORASON_GENOMES");
 
 $seqio_obj = Bio::SeqIO->new(-file => "$dir/$file",  -format => "genbank" );
-my $out= Bio::SeqIO->new(-file=> ">GENOMES/$number\.faa",-format=> 'Fasta');
-my $txt=open(FILE,">GENOMES/$number\.txt") or die $!;
+my $out= Bio::SeqIO->new(-file=> ">/home/output/GENOMES/$number\.faa",-format=> 'Fasta');
+my $txt=open(FILE,">/home/output/GENOMES/$number\.txt") or die $!;
 
 #print FILE "contig_id\tfeature_id\ttype\tlocation\tstart\tstop\tstrand\tfunction\tspecies\tfigfam\tevidence_codes\tnucleotide_sequence\taa_sequence\n";
 print FILE "contig_id\tfeature_id\ttype\tlocation\tstart\tstop\tstrand\tfunction\tlocus_tag\tfigfam\tspecies\tnucleotide_sequence\tamino_acid\tsequence_accession\n";
@@ -67,13 +67,14 @@ while (my $seq_object = $seqio_obj->next_seq ){
 				$protein=~s/\*//g;
 #                       	print ">$val\n$prot\n";
 				$prot=$protein;
-                        	$start = $feat_object->location->start;
-                        	$dir = $feat_object->strand;
-                        	if($dir == 1) {$dir="+";}elsif($dir== -1){$dir="-";}
-                        	$end = $feat_object->location->end;
+                        		$start = $feat_object->location->start;
+	                        	$dir = $feat_object->strand;
+	                        	if($dir == 1) {$dir="+";}elsif($dir== -1){$dir="-";}
+	                        	$end = $feat_object->location->end;
+
 #				print FILE "contig_id\tfeature_id\ttype\tObject_accesion\tstart\tstop\tstrand\tfunction\tlocus_tag\tfigfam\tspecies\tnucleotide_sequence\tsequence_accession\n";
-				chomp $accession;
-        			}
+					chomp $accession;
+       		 			}
 				
 		if ($feat_object->has_tag('locus_tag')){
 			 for my $locus_tag ($feat_object->get_tag_values('locus_tag')){
@@ -82,12 +83,14 @@ while (my $seq_object = $seqio_obj->next_seq ){
 			 for my $func ($feat_object->get_tag_values('product')){
 							$product=$func; }}
 
+				if(length($prot)>0){
                         	print FILE "$LOCUS\tfig|666666.$number.peg.$cont\ttype\tlocation\t$start\t$end\t$dir\t$product\t$accession\tfigfam\t$species_name\tnuc\t$prot\t$val\n";
               			my $seq = Bio::Seq->new(-seq => $prot, -display_id => "fig|666666.$number.peg.$cont");
                         	#my $pause=<STDIN>;
 				$out->write_seq($seq);	
                         	$cont++;
-                        	}
+				}
+                        }
 	}              
 }
                 ## aumentar contador
