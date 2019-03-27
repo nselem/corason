@@ -83,8 +83,8 @@ Outputs will be on the new folder /mypath/mydir/query
 In this example the query file was yourquery.query and the input directory was /home/mydir. Output files are located in /home/mydir/yourquery  
 ### Links  
 The CORASON source code and docker file are located at:  
-[Code] (https://github.com/nselem/corason  )  
-[Docker] (https://hub.docker.com/r/nselem/corason/  )  
+[Code](https://github.com/nselem/corason  )  
+[Docker](https://hub.docker.com/r/nselem/corason/  )  
 
 ### curl installation
 - `$ which curl`
