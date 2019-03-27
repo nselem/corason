@@ -22,7 +22,7 @@ CORASON was developed to find and prioritize biosynthetic gene clusters, but can
 Follow the steps, and type the commands into your terminal, do not type $.  
 
 ### 0. Install docker engine
-CORASON runs on docker. If you have docker engine installed, please skip this step. This is a Linux minimal docker installation guide, if you don't use Linux or you are looking for a detailed tutorial on Linux/Windows/Mac Docker engine installation please consult [Docker getting Starting] (https://docs.docker.com/linux/step_one/).  
+CORASON runs on docker. If you have docker engine installed, please skip this step. This is a Linux minimal docker installation guide, if you don't use Linux or you are looking for a detailed tutorial on Linux/Windows/Mac Docker engine installation please consult [Docker getting Starting](https://docs.docker.com/linux/step_one/).  
 
 `$ curl -fsSL https://get.docker.com/ | sh `  
 *if you don’t have curl search on this document curl installation  
