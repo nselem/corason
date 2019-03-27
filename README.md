@@ -44,7 +44,8 @@ Test your docker engine with the command:
 
 ### 2 Run CORASON
 #### 2.1 Set your database  
-Create an empty directory that contains your [[Input Files]]: RAST-genome data base, Rast_Ids file and file.query  
+Create an empty directory that contains your [[Input Files]]:  
+RAST-genome data base, Rast_Ids file and file.query  
 `$ mkdir mydir`  
 place your files inside the directory _mydir_ :  
 ![mydir.png](https://github.com/nselem/corason/blob/master/IMAGES/mydir3.png)  
