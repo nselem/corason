@@ -26,6 +26,8 @@ CORASON extense manual can be consulted at: https://github.com/nselem/EvoDivMet/
 
   --rast_ids  		Required (No Default)	RAST ids tab-separated table. From Rast: Job id\tGenome id\tOrganism name.
 
+  --g                   Genbank mode. If CORASON is used with genbank files instead of RAST fasta files, then -g must be used. A RAST ids file will be automatically created 
+
   --queryfile,-q	Required (No default)   Your aminoacid sequence on fasta file.
 
   --special_org,-s    	Required (No default)   Job Id (from RAST) for the cluster where your query belongs. 
@@ -62,13 +64,7 @@ For float values (as e_value, e_core etc) 0.001 will work, but .001 won't do it.
 =cut
 
 ##################################################################
-
-
-
-##################################################################################################
-######################################################################################################
 ########## Local variables ############################################################################
-######################################################################################################
 
 my $processId=$$;
 my $dir=&Cwd::cwd(); 		##The path of your directory
@@ -79,14 +75,13 @@ my $num="";
 
 ####################################################################################################
 #########################  end of variables ########################################################
-####################################################################################################
 ################       get options ##############################################################
 GetOptions(
 	'verbose' => \my $verbose,
         'gbk' => \my $gbk,
-        'rast_ids=s' => \my $rast_ids,
+        'rast_ids=s' => \my $rast,
 	'queryfile=s' => \my $queries,
-	'special_org=s' => \(my $special_org=""), 
+	'special_org=s' => \(my $special=""), 
 	'e_value=f'=> \(my $e_value="1E-15"), 
 	'bitscore=i'=>\(my $bitscore=0),   
 	'cluster_radio=i'=>\(my $cluster_radio="10"),  
@@ -103,27 +98,9 @@ GetOptions(
 print color('bold blue');
 print "\n$0 requires the queries argument (--q\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $queries;  ## A genome list is mandator
 
-	print "\n$0 requires the special_org argument (--s\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki at:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $special_org;  ## A genome list is mandatory
+	print "\n$0 requires the special_org argument (--s\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki at:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $special;  ## A genome list is mandatory
 
-
-
-### GBK to fasta inputs  
-if($gbk){
-	system("gbkIndex.pl CORASON_GENOMES");
-	$rast_ids="Corason_Rast.IDs";
-	my $special=`grep -w $special_org Corason_Rast.IDs|cut -f1`;
-	$special_org= $special;
-	chomp $special_org;
-	print "special $special_org";
-#	exit;
-}
-else{
-	print "\n$0 requires the rast_ids argument (--rast_ids\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $rast_ids;  ## A genome list is mandatory
-
-
-}
-
-
+my ($special_org,$rast_ids)=modes($special,$rast,$gbk);
 #HelpMessage(1) unless ($queries and $rast_ids and $special_org);
 ############################################################################################
 #############################################################################################
@@ -434,3 +411,34 @@ sub printVariables {
 	
 #	print "one liner executd\n";
 #}
+#----------------------------------------------------------------
+sub modes{
+## This sub load initial special_org number and RAST_ids values according to 
+#the user input gbks or RAST fasta
+### GBK to fasta inputs  
+	my $special=shift;
+	my $rast=shift;
+	my $gbk=shift;
+	my $special_new;
+	my $rast_ids=$rast;
+	if($gbk){
+		system("gbkIndex.pl CORASON_GENOMES");
+		$rast_ids="Corason_Rast.IDs";
+		$special_new=`grep -w $special Corason_Rast.IDs|cut -f1`;
+		chomp $special_new;
+#		print "special $special_new";
+#		exit;
+	}
+	else{
+		print "\n$0 requires the rast_ids argument (--rast_ids\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $rast;  ## A genome list is mandatory
+	print "special org: $special\n";
+	if ($special=~m/\.faa/){
+	$special =~ s /\.faa//;	
+	$special_new=$special;	
+		}
+#	print "special org: $special\n";
+#	exit;
+	}
+	return ($special,$rast_ids)	
+}
+

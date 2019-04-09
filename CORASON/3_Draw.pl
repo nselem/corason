@@ -263,13 +263,13 @@ sub arrow{
   else{
       #pick
       $u4=$end;  $v4=$refYCOORD->[$org-1];
-	print "print start - end $start-$end grueso entre dos $grueso/2";
+#	print "print start - end $start-$end grueso entre dos $grueso/2";
 	if(abs($start-$end)>=$grueso/2){
       		##down left
- 	     $u3=$end-$s/10-$grueso/2; 
+ 	     $u3=$end+$s/10+$grueso/2; 
 	     $v3=$refYCOORD->[$org-1]+$grueso/2;
 	      #up rigth
-      		$u5=$end-$s/10-$grueso/2; 
+      		$u5=$end+$s/10+$grueso/2; 
 		$v5= $refYCOORD->[$org-1]-$grueso/2;
 		#print "v1 $v3, v4 $v4, v5 $v5 \n";
 		}
