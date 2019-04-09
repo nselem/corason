@@ -68,7 +68,7 @@ sub AnotateGBK{
 sub readingTxtFile{
 	my $file=shift;
 	my $HASH=shift;
-	open (FILE, "/usr/src/CORASON/GENOMES/$file.txt") or die "Couldnt open $file \n$!";
+	open (FILE, "/home/output/GENOMES/$file.txt") or die "Couldnt open $file \n$!";
 		foreach my $line (<FILE>) {
 		chomp $line;	 
 		my @st=split(/\t/,$line);

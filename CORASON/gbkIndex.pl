@@ -36,13 +36,13 @@ foreach my $file ( @files){
 ################################### SUBS #####################################
 sub cleaning{
 
-	if (-e "/usr/src/CORASON/GENOMES"){
+	if (-e "/home/output/GENOMES"){
 		#print "cleaning";
-		system("rm -r /usr/src/CORASON/GENOMES");
-		system("rmdir /usr/src/CORASON/GENOMES");
+		system("rm -r /home/output/GENOMES");
+		system("rmdir /home/output/GENOMES");
 		}
-		system("mkdir /usr/src/CORASON/GENOMES");
-	if (-e "Corason_Rast.IDs"){
+		system("mkdir /home/output/GENOMES");
+	if (-e "/home/output/Corason_Rast.IDs"){
 		print "cleaning old files....\n";
 		system("rm -r Corason_Rast.IDs");
 		}
@@ -54,7 +54,7 @@ sub call_transform{
 	my $dir=shift;
 	my $cont=shift;
 		$cont++;
-	open (IDS, ">>Corason_Rast.IDs");
+	open (IDS, ">>/home/output/Corason_Rast.IDs");
 	chomp $file;
 	my $name=$file;
 	$name=~s/$dir//;

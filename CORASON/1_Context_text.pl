@@ -421,7 +421,8 @@ sub makeDB{
 
         foreach my $genome (@LISTA){
                if($verbose){print "I will open  #GENOMES/$genome\.faa#\n";}
-                #<STDIN>;
+    #           print"I will open  #GENOMES/$genome\.faa#\n";
+     #           <STDIN>;
                open(EACH, "GENOMES/$genome.faa") or die "Couldn't open GENOMES/$genome\.faa $!";;
                while(my $line=<EACH>){
                          chomp($line);
@@ -438,12 +439,16 @@ sub makeDB{
              #   close ALL;
                 close OUT;
 
+		##Cleaining empty records;
+#	system("awk -v RS=\">\" -v FS=\"\n\" -v ORS=\"\" ' { if ($2) print \">\"$0 } ' $query_name/TempConcatenados.faa.pre > $query_name/TempConcatenados.faa");
+	
 	if ($type eq 'nuc'){
 		`makeblastdb -in TempConcatenados.fna -dbtype nucl -out $DB.db`;
 			print "nucleotide db was created \n";
 
 		}
 	elsif($type eq 'prots'){
+                print "`makeblastdb -in $query_name/TempConcatenados.faa -dbtype prot -out $DB.db`";
                 `makeblastdb -in $query_name/TempConcatenados.faa -dbtype prot -out $DB.db`;
                 print "Protein db was created \n";
 	}
@@ -482,17 +487,15 @@ sub MakeBlast{
 	
 		elsif($type eq 'prots'){
 			print"$type type\n";
-			print "Aminoacid data will be analised\n";
-			#print "header.pl $genome_dir $rast_ids $query_original\n";
+			print "\n\nAminoacid data will be analized\n";
+			print "header.pl $genome_dir $rast_ids $query_original\n";
 			`header.pl $genome_dir $rast_ids $query_original`;
 
 
 			#print "Making blast db\n";
-			#print "pausei before makeDB\n";
-			#my $pause=<STDIN>;
+			print "pausei before makeDB\n";
 			makeDB($query_original,$DBname,$type,@LISTA);
 			blastpSeq($query_original,$evalueL,$query_name,$DBname,$bitscore);	
-
 
 			}
 		else {

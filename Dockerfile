@@ -40,8 +40,8 @@ RUN tar -xf /root/corason/CORASON/Gblocks_Linux64_0.91b.tar.Z -C /opt/ && ln -s 
 ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_1.1/bin:/root/corason/CORASON:/opt/fasttree
 RUN chmod +x /root/corason/CORASON/*pl  
 ## Moving to myapp directory
-RUN mkdir /usr/src/CORASON
-WORKDIR /usr/src/CORASON 
+RUN mkdir /home/output
+WORKDIR /home/output 
 ## Como paso variables ?
 CMD ["perl", "/root/corason/CORASON/corason.pl"]
 ## Volumen para escribir la salida
