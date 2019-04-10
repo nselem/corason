@@ -88,9 +88,9 @@ else
 	if [ ! -z ${INPUT_FILE} ] ; then
 		echo "corason is now running"
 
-		echo docker run --volume ${QUERY_DIR}/${QUERY_FILE}:${CONTAINER_SRC_DIR}/${QUERY_FILE}:ro --volume ${INPUT_DIR}:${CONTAINER_SRC_DIR}/CORASON_GENOMES:ro --volume ${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw --detach=false --rm nselem/corason corason.pl -q ${QUERY_FILE} -s ${INPUT_FILE} $@
+		echo docker run --volume ${WINDOWS_PATH}${QUERY_DIR}/${QUERY_FILE}:${CONTAINER_SRC_DIR}/${QUERY_FILE}:ro --volume ${WINDOWS_PATH}${INPUT_DIR}:${CONTAINER_SRC_DIR}/CORASON_GENOMES:ro --volume ${WINDOWS_PATH}${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw --detach=false --rm nselem/corason corason.pl -q ${QUERY_FILE} -s ${INPUT_FILE} $@
 
-		docker run --volume ${WINDOWS_PATH}${QUERY_DIR}/${QUERY_FILE}:${CONTAINER_SRC_DIR}/${QUERY_FILE}:ro --volume $WINDOWS_PATH}${INPUT_DIR}:${CONTAINER_SRC_DIR}/CORASON_GENOMES:ro --volume ${WINDOWS_PATH}${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw --detach=false --rm nselem/corason corason.pl -q ${QUERY_FILE} -s ${INPUT_FILE} $@
+		docker run --volume ${WINDOWS_PATH}${QUERY_DIR}/${QUERY_FILE}:${CONTAINER_SRC_DIR}/${QUERY_FILE}:ro --volume ${WINDOWS_PATH}${INPUT_DIR}:${CONTAINER_SRC_DIR}/CORASON_GENOMES:ro --volume ${WINDOWS_PATH}${OUTPUT_DIR}:${CONTAINER_DST_DIR}:rw --detach=false --rm nselem/corason corason.pl -q ${QUERY_FILE} -s ${INPUT_FILE} $@
 
 	fi
 fi
