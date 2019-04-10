@@ -1,16 +1,10 @@
 # DOCKER-VERSION 0.3.4
-FROM bioperl/bioperl
+FROM perl:5.20
 
 ## Installing perl module
 RUN curl -L http://cpanmin.us | perl - App::cpanminus
 RUN cpanm SVG
-RUN cpanm Bio::SeqIO;
-RUN cpanm Bio::SeqFeature::Generic;
 #RUN cpanm Bio::Seq;
-RUN apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y wget
-
 ###____________________________________________
 RUN if [ ! -d /opt ]; then mkdir /opt; fi
 ###____________________________________________
@@ -30,24 +24,22 @@ RUN mkdir /opt/nw && tar -C /opt/nw -xzvf /opt/newick-utils-1.6.tar.gz && cd /op
 ##___________________________________________________
 #### Vim
 RUN cd ~
-RUN apt-get install -y git-all
-RUN apt-get install -y libncurses5-dev libncursesw5-dev
-#RUN apt-get build-dep vim
 RUN git clone https://github.com/vim/vim.git
 RUN cd vim && ./configure && make VIMRUNTIMEDIR=/usr/share/vim/vim74 && make install
 #_________________________________________________________________________________________________
 ## CORASON
-RUN git clone https://github.com/nselem/corason.git
+RUN git clone https://github.com/nselem/corason
 RUN mkdir /opt/CORASON
 ####__________________________________________________________________
 # Installing GBlocks
-RUN tar -xf /corason/CORASON/Gblocks_Linux64_0.91b.tar.Z -C /opt/ && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
+RUN tar -xf /root/corason/CORASON/Gblocks_Linux64_0.91b.tar.Z -C /opt/ && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
 ## Other perl modules
 
+RUN cpanm Bio::SeqIO;
+RUN cpanm Bio::SeqFeature::Generic;
 
 ######### PATHS ENVIRONMENT
 ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_1.1/bin:/root/corason/CORASON:/opt/fasttree
-RUN mv /corason  /root/.
 RUN chmod +x /root/corason/CORASON/*pl  
 ## Moving to myapp directory
 RUN mkdir /home/output
