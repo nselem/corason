@@ -24,9 +24,11 @@ Corason - pass your inputs trough the command line!
 
 CORASON extense manual can be consulted at: https://github.com/nselem/EvoDivMet/wiki/Detailed-Tutorial/
 
-  --rast_ids  		Required (No Default)	RAST ids tab-separated table. From Rast: Job id\tGenome id\tOrganism name.
+  --rast_ids  		Required when faa files are used (No Default) RAST ids tab-separated table with the following Rast data.
+			 Job id\tGenome id\tOrganism name.
 
-  --g                   Genbank mode. If CORASON is used with genbank files instead of RAST fasta files, then -g must be used. A RAST ids file will be automatically created 
+  --g                   Genbank mode. If CORASON is used with genbank files instead of RAST fasta files, then -g must be used. 
+			A RAST ids file will be automatically created in this mode.
 
   --queryfile,-q	Required (No default)   Your aminoacid sequence on fasta file.
 
@@ -415,7 +417,7 @@ sub printVariables {
 sub modes{
 ## This sub load initial special_org number and RAST_ids values according to 
 #the user input gbks or RAST fasta
-### GBK to fasta inputs  
+### GBK to fasta inputs 
 	my $special=shift;
 	my $rast=shift;
 	my $gbk=shift;
@@ -439,6 +441,6 @@ sub modes{
 #	print "special org: $special\n";
 #	exit;
 	}
-	return ($special,$rast_ids)	
+	return ($special_new,$rast_ids)	
 }
 
