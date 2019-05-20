@@ -13,6 +13,11 @@ CORASON was developed to find and prioritize biosynthetic gene clusters, but can
 -**Interactive** CORASON is not a static database, it allows you to explore your own genomes.  
 -**Reproducibility** CORASON runs on docker, which allows to always perform the same analysis even if you change your Linux/perl/blast/muscle/Gblocks/quicktree distributions.  
 
+## CORASON modes RAST and gbk  
+CORASON is available in two modes genbank and RAST files. To install CORASON as presented in ["A computational framework for systematic exploration of biosynthetic diversity from large-scale genomic data"](https://www.biorxiv.org/content/10.1101/445270v1) use the installation guide from [BiG-SCAPE CORASON](https://bigscape-corason.secondarymetabolites.org/index.html) site.  
+
+The next steps are the installation guide for CORASON in RAST mode.
+
 ## CORASON Installation guide
 
 0. Install docker engine   
