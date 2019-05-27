@@ -433,14 +433,16 @@ sub modes{
 	}
 	else{
 		print "\n$0 requires the rast_ids argument (--rast_ids\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $rast;  ## A genome list is mandatory
+
 	print "special org: $special\n";
 	if ($special=~m/\.faa/){
-	$special =~ s /\.faa//;	
-	$special_new=$special;	
+	$special=~s/\.faa//;	
 		}
+	$special_new=$special;	
 #	print "special org: $special\n";
-#	exit;
 	}
+	print "rast=$rast_ids\tspecial=$special_new\n";
+	#exit;
 	return ($special_new,$rast_ids)	
 }
 
