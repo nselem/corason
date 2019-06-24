@@ -60,12 +60,12 @@ file.query (aminoacid fasta file) Save as many queries as you wish to process.
 
 ### 2.2 Run your docker nselem/corason image  
 
-`$ docker run --rm -i -t -v $(pwd):/usr/src/CORASON  nselem/corason /bin/bash`
+`$ docker run --rm -i -t -v $(pwd):/home/output  nselem/corason /bin/bash`
 
 **$(pwd)** points to your working directory where you store your query file and GENOMES database.  
 Use absolute paths. If you do not know the path to your current working directory type on the terminal  
 `$ pwd`  
-**/usr/src/CORASON** is fixed at the docker images, you should always use this name.  
+**/home/output** is fixed at the docker images, you should always use this name.  
 
 ### 2.3 Run CORASON inside your docker  
 
@@ -76,7 +76,7 @@ once you finished all your queries exit the container
 ### 2.3.1 Run CORASON image on exec mode  
 You can also run corason from the beggining of the image without the interactive terminal. The next line is equivalent to steps 2.2 (Run your docker nselem/corason image) and 2.3 (2.3 Run CORASON inside your docker)  
 
-`docker run --rm -v $(pwd):/usr/src/CORASON nselem/corason:latest /root/corason/CORASON/SSHcorason.pl yourquery.query yourRAST.Ids yourspecial_org`
+`docker run --rm -v $(pwd):/home/output nselem/corason:latest SSHcorason.pl yourquery.query yourRAST.Ids yourspecial_org`
 
 ### 2.4 Read your results! 
 Outputs will be on the new folder /mypath/mydir/query   
