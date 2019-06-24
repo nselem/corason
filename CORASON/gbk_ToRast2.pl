@@ -28,8 +28,8 @@ for my $feat_object ($seq_object->get_SeqFeatures) {
 #                       print ">$val\n$prot\n";
                         my $start = $feat_object->location->start;
                         my $dir = $feat_object->strand;
-                        if($dir == 1) {$dir="+";}elsif($dir== -1){$dir="-";}
                         my $end = $feat_object->location->end;
+                        if($dir == 1) {$dir="+";}elsif($dir== -1){$dir="-"; my $temp=$start; $start=$end; $end=$temp;}
                         print FILE "$name\tfig|666666.$number.peg.$cont\ttype\tlocation\t$start\t$end\t$dir\tfunction\t$val\tfigfam\tevidence\tnuc\t
 $prot\n";
               my $seq = Bio::Seq->new(-seq => $prot, -display_id => "fig|666666.$number.peg.$cont");
