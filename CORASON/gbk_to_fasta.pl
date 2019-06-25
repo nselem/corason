@@ -69,8 +69,8 @@ while (my $seq_object = $seqio_obj->next_seq ){
 				$prot=$protein;
                         		$start = $feat_object->location->start;
 	                        	$dir = $feat_object->strand;
-	                        	if($dir == 1) {$dir="+";}elsif($dir== -1){$dir="-";}
 	                        	$end = $feat_object->location->end;
+	                        	if($dir == 1) {$dir="+";}elsif($dir== -1){$dir="-";my $temp=$start; $start=$end;$end=$temp;}
 
 #				print FILE "contig_id\tfeature_id\ttype\tObject_accesion\tstart\tstop\tstrand\tfunction\tlocus_tag\tfigfam\tspecies\tnucleotide_sequence\tsequence_accession\n";
 					chomp $accession;
