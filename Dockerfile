@@ -37,21 +37,20 @@ RUN git clone https://github.com/vim/vim.git
 RUN cd vim && ./configure && make VIMRUNTIMEDIR=/usr/share/vim/vim74 && make install
 #_________________________________________________________________________________________________
 ## CORASON
-RUN git clone https://github.com/nselem/corason.git
-RUN mkdir /opt/CORASON
+RUN cd /opt && git clone https://github.com/nselem/corason.git
 ####__________________________________________________________________
 # Installing GBlocks
-RUN tar -xf /corason/CORASON/Gblocks_Linux64_0.91b.tar.Z -C /opt/ && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
+RUN tar -xf /opt/corason/CORASON/Gblocks_Linux64_0.91b.tar.Z -C /opt/ && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
 ## Other perl modules
 
 
 ######### PATHS ENVIRONMENT
-ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_1.1/bin:/root/corason/CORASON:/opt/fasttree
-RUN mv /corason  /root/.
-RUN chmod +x /root/corason/CORASON/*pl  
+ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_1.1/bin:/opt/corason/CORASON:/opt/fasttree
+#RUN mv /corason  /opt/.
+RUN chmod +x /opt/corason/CORASON/*pl  
 ## Moving to myapp directory
 RUN mkdir /home/output
 WORKDIR /home/output 
 ## Como paso variables ?
-CMD ["perl", "/root/corason/CORASON/corason.pl"]
+CMD ["perl", "/opt/corason/CORASON/corason.pl"]
 ## Volumen para escribir la salida
