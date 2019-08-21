@@ -42,7 +42,7 @@ RUN cd /opt && git clone https://github.com/nselem/corason.git
 # Installing GBlocks
 RUN tar -xf /opt/corason/CORASON/Gblocks_Linux64_0.91b.tar.Z -C /opt/ && ln -s /opt/Gblocks_0.91b/Gblocks /usr/bin/Gblocks
 ## Other perl modules
-
+RUN locale-gen en_US.utf8
 
 ######### PATHS ENVIRONMENT
 ENV PATH /opt/blast/bin:$PATH:/opt/muscle:/opt/Gblocks:/opt/quicktree/quicktree_1.1/bin:/opt/corason/CORASON:/opt/fasttree
