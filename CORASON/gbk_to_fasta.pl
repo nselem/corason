@@ -1,5 +1,6 @@
 #!/usr/bin/perl 
 use lib '/usr/local/lib/perl5/site_perl/5.20.3';
+use Cwd qw(cwd);
 
 ## I want to extract CDS entrys and ids from a geneBankFile
 ## coordinates from each CDS and direction
@@ -13,15 +14,20 @@ use Bio::SeqIO;
 my $dir=$ARGV[0];
 my $file=$ARGV[1];
 my $number=$ARGV[2];
+my $conda=$ARGV[3];
 my $accession="accession";
 my $species_name="species";
+my $outdir="/home/output";
+if($conda){
+        $outdir=cwd;
+        }
 
 #if (-e "CORASON_GENOMES"){system("rm -r CORASON_GENOMES");  }
 #system("mkdir CORASON_GENOMES");
 
 $seqio_obj = Bio::SeqIO->new(-file => "$dir/$file",  -format => "genbank" );
-my $out= Bio::SeqIO->new(-file=> ">/home/output/GENOMES/$number\.faa",-format=> 'Fasta');
-my $txt=open(FILE,">/home/output/GENOMES/$number\.txt") or die $!;
+my $out= Bio::SeqIO->new(-file=> ">$outdir/GENOMES/$number\.faa",-format=> 'Fasta');
+my $txt=open(FILE,">$outdir/GENOMES/$number\.txt") or die $!;
 
 #print FILE "contig_id\tfeature_id\ttype\tlocation\tstart\tstop\tstrand\tfunction\tspecies\tfigfam\tevidence_codes\tnucleotide_sequence\taa_sequence\n";
 print FILE "contig_id\tfeature_id\ttype\tlocation\tstart\tstop\tstrand\tfunction\tlocus_tag\tfigfam\tspecies\tnucleotide_sequence\tamino_acid\tsequence_accession\n";

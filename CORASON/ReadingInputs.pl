@@ -8,6 +8,7 @@ use warnings;
 ##
 
 my $outname=$ARGV[0];
+my $scripts=$ARGV[1];
 #print "Outname directory is $outname\n";
 my @CLUSTERS=qx/ls $outname\/*.input/; 	## Read all input Uncomment to read all
 my %FREQ;
@@ -48,7 +49,7 @@ foreach my $context(@CLUSTERS){
 			else{$FREQ{$num}=1;}
 			}
 		##### Printing the GBK
-		system("GbkCreator.pl $file $outname");
+		system("$scripts/GbkCreator.pl $file $outname $scripts");
 		#my $pause=<STDIN>;
 		#print "pause\n";
 			

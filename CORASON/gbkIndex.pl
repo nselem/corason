@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use lib '/usr/local/lib/perl5/site_perl/5.20.3';
 use strict;
+use Cwd qw(cwd);
 use Bio::SeqIO;
 use Bio::Species;
 #############################################################################################
@@ -10,8 +11,14 @@ use Bio::Species;
 # Output: By each compound a folder with its correspondent GENOMES and RastIds
 ###########################################################################################
 my $dir=$ARGV[0]; ## ADdress where the gbks are
+my $conda=$ARGV[1]; ## ADdress where the gbks are
 $dir=~s/\/$//; ## just in case take out the /
 my @files=qx /ls $dir/;
+my $scripts="/opt/corason/CORASON";
+my $outdir="/home/output";
+if($conda){$scripts="CORASON";
+	$outdir=cwd;
+	}
 
 #print "Directory $dir\n";
 
@@ -36,15 +43,15 @@ foreach my $file ( @files){
 ################################### SUBS #####################################
 sub cleaning{
 
-	if (-e "/home/output/GENOMES"){
+	if (-e "$outdir/GENOMES"){
 		#print "cleaning";
-		system("rm -r /home/output/GENOMES");
-		system("rmdir /home/output/GENOMES");
+		system("rm -r $outdir/GENOMES");
+		system("rmdir $outdir/GENOMES");
 		}
-		system("mkdir /home/output/GENOMES");
-	if (-e "/home/output/Corason_Rast.IDs"){
+		system("mkdir $outdir/GENOMES");
+	if (-e "$outdir/Corason_Rast.IDs"){
 		print "cleaning old files....\n";
-		system("rm -r Corason_Rast.IDs");
+		system("rm -r $outdir/Corason_Rast.IDs");
 		}
 	}
 #__________________________________________________________
@@ -54,7 +61,7 @@ sub call_transform{
 	my $dir=shift;
 	my $cont=shift;
 		$cont++;
-	open (IDS, ">>/home/output/Corason_Rast.IDs");
+	open (IDS, ">>$outdir/Corason_Rast.IDs");
 	chomp $file;
 	my $name=$file;
 	$name=~s/$dir//;
@@ -95,8 +102,8 @@ sub call_transform{
 #		print  "$number\t666666.$number\t$org $accesion \n";
 		print  IDS "$number\t666666.$number\t$file \n";
 
-		print(" gbk_to_fasta.pl $dir $file $number\n");
-		system("gbk_to_fasta.pl $dir $file $number\n");
+		print("$scritps/gbk_to_fasta.pl $dir $file $number $conda\n");
+		system("$scripts/gbk_to_fasta.pl $dir $file $number $conda\n");
 	#}
 	close IDS;
 	#return $cont;

@@ -5,6 +5,7 @@ use Bio::SeqFeature::Generic;
 use Bio::Seq;
 use Bio::SeqIO;
 use Bio::Species;
+use Cwd qw(cwd);
 ###########################################################################
 # Get a Gen Id and a File Id (Genome.txt) and extracts 20 genes 
 # (10 each side) on genebank format
@@ -12,6 +13,10 @@ use Bio::Species;
 
 my $genId=$ARGV[0]; ## something like fig|6666666.279404.peg.1
 my $outname=$ARGV[1];
+my $scripts=$ARGV[2];
+
+my $genomes_dir="/home/output";
+if($scripts eq 'CORASON'){$genomes_dir=cwd;}
 #chomp $genId; 
 #print "GenId is $genId\n";
 #my $pause=<STDIN>;
@@ -68,7 +73,7 @@ sub AnotateGBK{
 sub readingTxtFile{
 	my $file=shift;
 	my $HASH=shift;
-	open (FILE, "/home/output/GENOMES/$file.txt") or die "Couldnt open $file \n$!";
+	open (FILE, "$genomes_dir/GENOMES/$file.txt") or die "Couldnt open $file \n$!";
 		foreach my $line (<FILE>) {
 		chomp $line;	 
 		my @st=split(/\t/,$line);

@@ -17,6 +17,7 @@ my $BLAST2="Core$name.blast";
 GetOptions(
         'help|?' => \my $help,
         'verbose' => \my $verbose,
+        'conda' => \my $conda,
         'e_core=f'=>\(my $e_core=.001) ,
         'list=s'=>\my $lista ,
 	'num=i'=>\my $num,
@@ -48,6 +49,9 @@ sub Star;
 ########## Main ######################################################
 
 my @LISTA=split(",",$lista);
+my $scripts="";
+if($conda){$scripts="CORASON";}
+else{$scripts="/opt/corason/CORASON";}
 
 run_blast($outname,$e_core,$lista,$BLAST2);
 
@@ -55,19 +59,19 @@ print "I will run allvsall with blast $outname/$BLAST2\n";
 
 
 #print "`perl allvsall.pl -R $lista -v 0 -i $BLAST2 -outname $outname`\n";
-system(" allvsall.pl -R $lista -v 0 -i $BLAST2 -outname $outname");
+system(" $scripts/allvsall.pl -R $lista -v 0 -i $BLAST2 -outname $outname");
 #`perl allvsall.pl -R 8,12,57,58,59,60,61,248,261,262,273,275,277,282,310 -v 0 -i ClusterTools1.blast`;
 
 print "Starting Star groups \n num $num\n list $lista\n";
 my $corebool=Star($outname,$num,$lista);
 
 if($corebool != 0){
-print "SearchAminoacidsFromCore.pl $lista $outname\n";
-system("SearchAminoacidsFromCore.pl $lista $outname");
+print "$scripts/SearchAminoacidsFromCore.pl $lista $outname\n";
+system("$scripts/SearchAminoacidsFromCore.pl $lista $outname");
 
 
-print "ReadReaction $lista $num $outname\n";
-system("ReadReaccion.pl $lista $num $outname");
+print "$scripts/ReadReaction $lista $num $outname\n";
+system("$scripts/ReadReaccion.pl $lista $num $outname");
 }
 else { print "There is no star-core on this clusters\n";}
 ######################################################################
@@ -165,7 +169,7 @@ sub run_blast{
 		#print "File concatenados.faa removed\n";
 		unlink ("$outname/MINI/Concatenados.faa");
 		}
-	system(" header2.pl $list $outname");
+	system(" $scripts/header2.pl $list $outname");
 
 	`makeblastdb -in $outname/MINI/Concatenados.faa -dbtype prot -out $outname/MINI/Database.db`;
 	`blastp -db $outname/MINI/Database.db -query $outname/MINI/Concatenados.faa -outfmt 6 -evalue $e -num_threads 4 -out $outname/$blastname`;

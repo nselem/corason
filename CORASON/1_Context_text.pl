@@ -41,6 +41,7 @@ my $genome_dir="GENOMES";
 
 GetOptions(
         'verbose' => (\my $verbose),
+        'conda' => (\my $conda),
         'queryfile=s' => \my $queries,
         'special_org=i' => \my $special_org,
         'e_value=f'=> \my $e_value,
@@ -61,7 +62,17 @@ die "$0 requires the rast_ids argument (--rast_ids\n" unless $rast_ids;  ## A ge
 
 my $query_name=$queries;			
 #$query_name=~s/.query//; # $outname
-my $query_dir="/home/output/$query_name-output"; # $outname
+my $query_dir=""; # $outname
+my $scripts=""; # $outname
+
+if($conda){
+	$scripts="CORASON";
+	$query_dir="$query_name-output";
+	} # $outname
+else{	
+	$scripts="/opt/corason/CORASON";
+	$query_dir="/home/output/$query_name-output";} # $outname
+
 system("mkdir $query_dir");
 system("cp $queries $query_dir/$queries");
 if ($verbose){print "Your special org is $special_org\n";}
@@ -488,12 +499,12 @@ sub MakeBlast{
 		elsif($type eq 'prots'){
 			print"$type type\n";
 			print "\n\nAminoacid data will be analized\n";
-			print "header.pl $genome_dir $rast_ids $query_original\n";
-			`header.pl $genome_dir $rast_ids $query_original`;
+			print "$scripts/header.pl $genome_dir $rast_ids $query_original\n";
+			`$scripts/header.pl $genome_dir $rast_ids $query_original`;
 
 
 			#print "Making blast db\n";
-			print "pausei before makeDB\n";
+			print "pause before makeDB\n";
 			makeDB($query_original,$DBname,$type,@LISTA);
 			blastpSeq($query_original,$evalueL,$query_name,$DBname,$bitscore);	
 

@@ -81,6 +81,7 @@ my $num="";
 GetOptions(
 	'verbose' => \my $verbose,
         'gbk' => \my $gbk,
+        'conda' => \my $conda,
         'rast_ids=s' => \my $rast,
 	'queryfile=s' => \my $queries,
 	'special_org=s' => \(my $special=""), 
@@ -119,6 +120,8 @@ print color('reset');
 print "\n\n ##########################################################\n";
 print "Your current directory is $dir, local path $name\n";
 
+my $scripts="/opt/corason/CORASON";
+if($conda){$scripts="CORASON";}
 printVariables($verbose,$queries,$special_org,$e_value,$bitscore,$cluster_radio,$e_cluster,$e_core,$rescale,$rast_ids,$antismash);
 
 my $list_all=get_lista($list,$verbose,$rast_ids);
@@ -126,10 +129,10 @@ my $list_all=get_lista($list,$verbose,$rast_ids);
 my $number=get_number($list,$list_all,$rast_ids);
 
 
-print ("CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash");
+## Modifying to conda version
+print ("$scripts/CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash -conda $conda");
 
-system ("CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -c $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash");
-
+	system ("$scripts/CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash -conda $conda");
 ###############################################################################################
 
 
@@ -424,7 +427,7 @@ sub modes{
 	my $special_new;
 	my $rast_ids=$rast;
 	if($gbk){
-		system("gbkIndex.pl CORASON_GENOMES");
+		system("$scripts/gbkIndex.pl CORASON_GENOMES $conda");
 		$rast_ids="Corason_Rast.IDs";
 		$special_new=`grep -w $special Corason_Rast.IDs|cut -f1`;
 		chomp $special_new;
