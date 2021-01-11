@@ -1,0 +1,9 @@
+name: corason                                                               
+
+dependencies:                             
+  - blast            
+  - fasttree
+  - muscle             
+  - newick_utils 
+  - gblocks
+
