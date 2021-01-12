@@ -16,7 +16,7 @@ $dir=~s/\/$//; ## just in case take out the /
 
 my @files=qx /ls $dir/;
 my $outdir="/home/output";
-if($dir_scriptsi eq "CORASON"){
+if($dir_scripts eq "CORASON"){
 	$outdir=cwd;
 	}
 
