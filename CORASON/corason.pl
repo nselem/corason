@@ -52,7 +52,7 @@ CORASON extense manual can be consulted at: https://github.com/nselem/EvoDivMet/
 
   --antismash,a      	AntiSMASH file optional 
  
-  --verbose,v           If you would like to read more output from scripts. 
+  --verbose,v           If you would like to read more output from dir_scripts. 
 			Most of the time only useful if you would like script debugging.
 
 Remarks:
@@ -103,7 +103,11 @@ print "\n$0 requires the queries argument (--q\n\n" and print color('reset') and
 
 	print "\n$0 requires the special_org argument (--s\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki at:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $special;  ## A genome list is mandatory
 
-my ($special_org,$rast_ids)=modes($special,$rast,$gbk);
+my $dir_scripts="/opt/corason/CORASON";
+if($conda){print"Conda mode"; $dir_scripts="CORASON";}
+#print("gbk $gbk $rast $special");exit;
+
+my ($special_org,$rast_ids)=modes($special,$rast,$gbk,$dir_scripts);
 #HelpMessage(1) unless ($queries and $rast_ids and $special_org);
 ############################################################################################
 #############################################################################################
@@ -120,19 +124,22 @@ print color('reset');
 print "\n\n ##########################################################\n";
 print "Your current directory is $dir, local path $name\n";
 
-my $scripts="/opt/corason/CORASON";
-if($conda){$scripts="CORASON";}
-printVariables($verbose,$queries,$special_org,$e_value,$bitscore,$cluster_radio,$e_cluster,$e_core,$rescale,$rast_ids,$antismash);
 
+printVariables($verbose,$queries,$special_org,$e_value,$bitscore,$cluster_radio,$e_cluster,$e_core,$rescale,$rast_ids,$antismash);
 my $list_all=get_lista($list,$verbose,$rast_ids);
 
 my $number=get_number($list,$list_all,$rast_ids);
 
 
 ## Modifying to conda version
-print ("$scripts/CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash -conda $conda");
-
-	system ("$scripts/CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash -conda $conda");
+if($conda){
+print ("$dir_scripts/CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash -conda $conda");
+system ("$dir_scripts/CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash -conda $conda");
+}
+else{
+print ("$dir_scripts/CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash ");
+system ("$dir_scripts/CoreCluster.pl -q $queries  -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_core $e_core -e_cluster $e_cluster -rescale $rescale -l $list_all -num $number -rast_ids $rast_ids -antismash $antismash ");
+}
 ###############################################################################################
 
 
@@ -420,19 +427,23 @@ sub printVariables {
 sub modes{
 ## This sub load initial special_org number and RAST_ids values according to 
 #the user input gbks or RAST fasta
-### GBK to fasta inputs 
+### GBK to fasta inputs
+
+	print " Picking mode gbk/RAST \n"; 
 	my $special=shift;
 	my $rast=shift;
 	my $gbk=shift;
+	my $dir_scripts=shift;
 	my $special_new;
 	my $rast_ids=$rast;
-	if($gbk){
-		system("$scripts/gbkIndex.pl CORASON_GENOMES $conda");
-		$rast_ids="Corason_Rast.IDs";
-		$special_new=`grep -w $special Corason_Rast.IDs|cut -f1`;
-		chomp $special_new;
-#		print "special $special_new";
-#		exit;
+	if($gbk ){
+			print("$dir_scripts/gbkIndex.pl CORASON_GENOMES $dir_scripts");
+			system("$dir_scripts/gbkIndex.pl CORASON_GENOMES $dir_scripts");
+			$rast_ids="Corason_Rast.IDs";
+			$special_new=`grep -w $special Corason_Rast.IDs|cut -f1`;
+			chomp $special_new;
+#			print "special $special_new";
+#			exit;
 	}
 	else{
 		print "\n$0 requires the rast_ids argument (--rast_ids\n\n" and print color('reset') and print "for help, type:\ncorason.pl -h\n\nConsult our wiki:https://github.com/nselem/EvoDivMet/wiki\n\n" and HelpMessage(1) unless $rast;  ## A genome list is mandatory

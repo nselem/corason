@@ -14,11 +14,11 @@ use Bio::SeqIO;
 my $dir=$ARGV[0];
 my $file=$ARGV[1];
 my $number=$ARGV[2];
-my $conda=$ARGV[3];
+my $dir_scripts=$ARGV[3];
 my $accession="accession";
 my $species_name="species";
 my $outdir="/home/output";
-if($conda){
+if($dir_scripts eq "CORASON"){
         $outdir=cwd;
         }
 

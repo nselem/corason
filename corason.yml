@@ -1,9 +1,13 @@
 name: corason                                                               
-
+#channels:
+#  - bioconda
+#  - conda-forge
 dependencies:                             
   - blast            
   - fasttree
   - muscle             
   - newick_utils 
   - gblocks
-
+  - perl 
+  - perl-bioperl 
+  - perl-app-cpanminus

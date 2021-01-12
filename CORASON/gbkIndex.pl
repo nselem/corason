@@ -11,16 +11,16 @@ use Bio::Species;
 # Output: By each compound a folder with its correspondent GENOMES and RastIds
 ###########################################################################################
 my $dir=$ARGV[0]; ## ADdress where the gbks are
-my $conda=$ARGV[1]; ## ADdress where the gbks are
+my $dir_scripts=$ARGV[1]; ## ADdress where the gbks are
 $dir=~s/\/$//; ## just in case take out the /
+
 my @files=qx /ls $dir/;
-my $scripts="/opt/corason/CORASON";
 my $outdir="/home/output";
-if($conda){$scripts="CORASON";
+if($dir_scriptsi eq "CORASON"){
 	$outdir=cwd;
 	}
 
-#print "Directory $dir\n";
+print "Directory $dir\n";
 
 foreach my $file (@files){
 	#print $file;
@@ -102,8 +102,8 @@ sub call_transform{
 #		print  "$number\t666666.$number\t$org $accesion \n";
 		print  IDS "$number\t666666.$number\t$file \n";
 
-		print("$scritps/gbk_to_fasta.pl $dir $file $number $conda\n");
-		system("$scripts/gbk_to_fasta.pl $dir $file $number $conda\n");
+		print("$dir_scripts/gbk_to_fasta.pl $dir $file $number $dir_scripts\n");
+		system("$dir_scripts/gbk_to_fasta.pl $dir $file $number $dir_scripts\n");
 	#}
 	close IDS;
 	#return $cont;

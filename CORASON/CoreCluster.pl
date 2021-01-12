@@ -71,9 +71,9 @@ printVariables($verbose);
 
 my @LISTA=split(",",$lista);
 my $outname_dir="/home/output/$queries-output";
-my $scripts="/opt/corason/CORASON";
+my $dir_scripts="/opt/corason/CORASON";
 if($conda){$outname_dir="$queries-output";
-           $scripts="CORASON";}
+           $dir_scripts="CORASON";}
 #$outname=~s/\.query//;
 if(!-e $outname_dir) {system("mkdir $outname_dir");}
 if ($verbose ){print "Your courrent directory: $name\n";}
@@ -85,23 +85,23 @@ my $INPUTS="";
 my $orderFile="";
 
 #_________  Query blast ________________________________________________________________________________
-	print "\nSearching sequences from query ($scripts/1_Context_text.pl)\n";
+	print "\nSearching sequences from query ($dir_scripts/1_Context_text.pl)\n";
 my $NUM = `wc -l < $rast_ids`;
 	if ($NUM == $num){
 		## All genomes will be procesed!!!!!!!!!!!!!!!!!
-		print("$scripts/1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type  prots -makedb -antismash $antismash -conda $conda \n\n");
-		system("$scripts/1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type  prots -makedb -antismash $antismash -conda $conda");
+		print("$dir_scripts/1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type  prots -makedb -antismash $antismash -dir_scripts $dir_scripts \n\n");
+		system("$dir_scripts/1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type  prots -makedb -antismash $antismash -dir_scripts $dir_scripts");
                 }
         else {
                 print "\nSearching on clusters in reduced list: $lista\n";        
-		system("$scripts/1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type prots -makedb -antismash $antismash -conda $conda");
+		system("$dir_scripts/1_Context_text.pl -q $queries -s $special_org -e_value $e_value -b $bitscore -cluster_radio $cluster_radio -e_cluster $e_cluster -r $rescale -l $lista -n $num -rast_ids $rast_ids -type prots -makedb -antismash $antismash -dir_scripts $dir_scripts");
                }
 	print "Sequences search finished\n\n";
 #___________________ end Query blast ________________________________________________________________________
 
 
 print "Analizing cluster with hits according to the query sequence\n\n";
-	my $new_data=`$scripts/ReadingInputs.pl $outname_dir $scripts`;
+	my $new_data=`$dir_scripts/ReadingInputs.pl $outname_dir $dir_scripts`;
 	#exit;
 	my @st=split(/\t/,$new_data);
 ($num,$lista)=split(/\t/,$new_data);
@@ -121,7 +121,7 @@ print "Creating query hits tree, without considering the core-clusters\n";
         system "muscle -in $outname_dir/PrincipalHits -out $outname_dir/PrincipalHits.muscle -fasta -quiet -group";
         print "\nShaving alignments with Gblocks\n";
         system "Gblocks $outname_dir/PrincipalHits.muscle -b4=5 -b5=n -b3=5";
-        system("$scripts/RenamePrincipalHits.pl $outname_dir PrincipalHits.muscle-gb $rast_ids");
+        system("$dir_scripts/RenamePrincipalHits.pl $outname_dir PrincipalHits.muscle-gb $rast_ids");
 	system "FastTree $outname_dir/RightNamesPrincipalHits.txt > $outname_dir/$queries\_PrincipalHits.tre";
 	system("nw_topology -b -IL $outname_dir/$queries\_PrincipalHits.tre | nw_display -b 'opacity:0' -v 40 -s - >$outname_dir/$queries\_tree.svg");
 	system "nw_labels -I $outname_dir/$queries\_PrincipalHits.tre>$outname_dir/PrincipalHits.order";
@@ -129,7 +129,7 @@ print "Creating query hits tree, without considering the core-clusters\n";
 	if(! -e "$outname_dir/PrincipalHits.order"){
 	##last hope, if the enzyme tree cant be produced this may be due tu the shave
 	## So we will try the tree without shave the enzyme 
-        system("$scripts/RenamePrincipalHits.pl $outname_dir PrincipalHits.muscle $rast_ids");
+        system("$dir_scripts/RenamePrincipalHits.pl $outname_dir PrincipalHits.muscle $rast_ids");
 	system "FastTree $outname_dir/RightNamesPrincipalHits_Unshaved.txt > $outname_dir/$queries\_Unshaved.tre";
 	system("nw_topology -b -IL $outname_dir/$queries\_Unshaved.tre | nw_display -b 'opacity:0' -v 40 -s - >$outname_dir/$queries\_tree.svg");
 	system "nw_labels -I $outname_dir/$queries\_Unshaved.tre>$outname_dir/PrincipalHitsUnshaved.order";
@@ -140,8 +140,8 @@ print "Creating query hits tree, without considering the core-clusters\n";
 #______________________________________________________________________________________________________________
 
 	print "Searching genetic core on selected clusters\n";
-	print"$scripts/2_OrthoGroups.pl -e_core $e_core -list $lista -num $num -rast_ids $rast_ids -outname $outname_dir -conda $conda\n";
-	system("$scripts/2_OrthoGroups.pl -e_core $e_core -list $lista -num $num -rast_ids $rast_ids -outname $outname_dir -conda $conda");
+	print"$dir_scripts/2_OrthoGroups.pl -e_core $e_core -list $lista -num $num -rast_ids $rast_ids -outname $outname_dir -dir_scripts $dir_scripts\n";
+	system("$dir_scripts/2_OrthoGroups.pl -e_core $e_core -list $lista -num $num -rast_ids $rast_ids -outname $outname_dir -dir_scripts $dir_scripts");
 	
 	print "Core finished!\n\n";
 	my $boolCore= `wc -l <$outname_dir/Core`;
@@ -168,20 +168,20 @@ if ($boolCore>1){
 	print "Aligning...\n";
 	#print "lista $lista\n";
 	#print ("multiAlign_gb.pl $num $lista $outname_dir");
-	system ("$scripts/multiAlign_gb.pl $num $lista $outname_dir");
+	system ("$dir_scripts/multiAlign_gb.pl $num $lista $outname_dir");
 	print "Sequences were aligned\n\n";
 
 
 
 	print "Creating aminoacid core cluster matrix..\n";
-	system("$scripts/ChangeName.pl $outname_dir");
+	system("$dir_scripts/ChangeName.pl $outname_dir");
 
-	system("$scripts/EliminadorLineas.pl $outname_dir");
-	system("$scripts/Concatenador.pl $outname_dir");
+	system("$dir_scripts/EliminadorLineas.pl $outname_dir");
+	system("$dir_scripts/Concatenador.pl $outname_dir");
 
 
-	print("$scripts/Rename_Ids_Star_Tree.pl $rast_ids $outname_dir\n");
-	system("$scripts/Rename_Ids_Star_Tree.pl $rast_ids $outname_dir");
+	print("$dir_scripts/Rename_Ids_Star_Tree.pl $rast_ids $outname_dir\n");
+	system("$dir_scripts/Rename_Ids_Star_Tree.pl $rast_ids $outname_dir");
 
 	my $line =`perl -ne \'print if \$\. == 2\' $outname_dir/RightNames.txt `;
 	#print "`perl -ne 'print if \$\. == 2' RightNames.txt `";
@@ -228,8 +228,8 @@ if ($boolCore>1){
 
 print "\n\n Draw\n";
 print "Now SVG file will be generated with inputs: $INPUTS\n\n";
-	print "$scripts/3_Draw.pl $rescale $INPUTS $outname_dir $queries";
-	system("$scripts/3_Draw.pl $rescale $INPUTS $outname_dir $queries");
+	print "$dir_scripts/3_Draw.pl $rescale $INPUTS $outname_dir $queries";
+	system("$dir_scripts/3_Draw.pl $rescale $INPUTS $outname_dir $queries");
 
 print "SVG  file generated\n\n";
 `mv $outname_dir/Contextos.svg $outname_dir/$queries\.svg`;

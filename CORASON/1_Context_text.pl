@@ -41,7 +41,7 @@ my $genome_dir="GENOMES";
 
 GetOptions(
         'verbose' => (\my $verbose),
-        'conda' => (\my $conda),
+        'dir_scripts=s' => \my $dir_scripts,
         'queryfile=s' => \my $queries,
         'special_org=i' => \my $special_org,
         'e_value=f'=> \my $e_value,
@@ -63,14 +63,12 @@ die "$0 requires the rast_ids argument (--rast_ids\n" unless $rast_ids;  ## A ge
 my $query_name=$queries;			
 #$query_name=~s/.query//; # $outname
 my $query_dir=""; # $outname
-my $scripts=""; # $outname
 
-if($conda){
-	$scripts="CORASON";
+print "dir_scripts $dir_scripts\n";
+if($dir_scripts eq "CORASON"){
 	$query_dir="$query_name-output";
 	} # $outname
 else{	
-	$scripts="/opt/corason/CORASON";
 	$query_dir="/home/output/$query_name-output";} # $outname
 
 system("mkdir $query_dir");
@@ -330,7 +328,7 @@ sub getInfo{		## Read the txt
 	my @sp=split(/\t|\n/,$Grep);
 	my $contig=$sp[0];	
 	my $hit=$sp[1];
-	if ($hit=~/gb/){$hit=~s/gi\|\d*\|gb\|\w*.\w*\|//;}
+	if($hit){if ($hit=~/gb/){$hit=~s/gi\|\d*\|gb\|\w*.\w*\|//;}}
 	my $start=$sp[4];
 	my $stop=$sp[5];
 	my $dir=$sp[6];
@@ -499,8 +497,8 @@ sub MakeBlast{
 		elsif($type eq 'prots'){
 			print"$type type\n";
 			print "\n\nAminoacid data will be analized\n";
-			print "$scripts/header.pl $genome_dir $rast_ids $query_original\n";
-			`$scripts/header.pl $genome_dir $rast_ids $query_original`;
+			print "$dir_scripts/header.pl $genome_dir $rast_ids $query_original\n";
+			`$dir_scripts/header.pl $genome_dir $rast_ids $query_original`;
 
 
 			#print "Making blast db\n";
