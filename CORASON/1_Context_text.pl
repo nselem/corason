@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
 use warnings;
 use Getopt::Long 'HelpMessage';
@@ -40,22 +40,22 @@ my $name=pop @{[split m|/|, $dir]};             ##The path of your directory
 my $genome_dir="GENOMES";
 
 GetOptions(
-        'verbose' => (\my $verbose),
-        'dir_scripts=s' => \my $dir_scripts,
-        'queryfile=s' => \my $queries,
-        'special_org=i' => \my $special_org,
-        'e_value=f'=> \my $e_value,
-        'bitscore=i'=>\my $bitscore,
-        'num=i'=>\my $num,
-        'makedb'=>\my $MakeDB,
-        'cluster_radio=i'=>\my $cluster_radio,
-        'e_cluster=f'=>\my $e_cluster,
-        'list=s'=>\my $list ,
-        'rast_ids=s' => \my $rast_ids,
-        'type=s' => \my $type,
-	'antismash=s'=>\my $antismash,
-	 'help'     =>   sub { HelpMessage(0) },
-        ) or HelpMessage(1);
+    'verbose' => (\my $verbose),
+    'dir_scripts=s' => \my $dir_scripts,
+    'queryfile=s' => \my $queries,
+    'special_org=i' => \my $special_org,
+    'e_value=f'=> \my $e_value,
+    'bitscore=i'=>\my $bitscore,
+    'num=i'=>\my $num,
+    'makedb'=>\my $MakeDB,
+    'cluster_radio=i'=>\my $cluster_radio,
+    'e_cluster=f'=>\my $e_cluster,
+    'list=s'=>\my $list ,
+    'rast_ids=s' => \my $rast_ids,
+    'type=s' => \my $type,
+    'antismash=s'=>\my $antismash,
+    'help'     =>   sub { HelpMessage(0) },
+    ) or HelpMessage(1);
 
 die "$0 requires the list argument (--list\n" unless $list;  ## A genome list is mandatory
 die "$0 requires the rast_ids argument (--rast_ids\n" unless $rast_ids;  ## A genome names list is mandatory
@@ -65,11 +65,11 @@ my $query_name=$queries;
 my $query_dir=""; # $outname
 
 print "dir_scripts $dir_scripts\n";
-if($dir_scripts eq "CORASON"){
-	$query_dir="$query_name-output";
-	} # $outname
-else{	
-	$query_dir="/home/output/$query_name-output";} # $outname
+if ( $dir_scripts eq "CORASON" ) {
+    $query_dir="$query_name-output";
+}  else {	
+    $query_dir="/home/output/$query_name-output";
+} # $outname
 
 system("mkdir $query_dir");
 system("cp $queries $query_dir/$queries");

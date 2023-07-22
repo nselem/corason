@@ -1,4 +1,6 @@
+#!/usr/bin/env perl
 use strict;
+use warnings;
 #############################################################################################
 # this script will turn gbk's from BigScape into CORASON inputfiles Faa and txt
 # Input: Jorge's list of compound BGCs clustered on families

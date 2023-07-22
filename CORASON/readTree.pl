@@ -1,3 +1,4 @@
+#!/usr/bin/env perl
 use strict;
 ## I will read trees from figtree
 ## and get the y names coordinates
@@ -34,7 +35,7 @@ sub Coordinates{
 #			print "LINE $count:@node[1]!\n";
 			#44.62
 #			print "LINE $count+3:@y[6]!\n";
-			$COORD{@y[6]}=$node[1];
+			$COORD{$y[6]}=$node[1];
 			}
 		$count++;
 		}

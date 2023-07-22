@@ -1,9 +1,7 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
-
-my $yourquery=$ARGV[0]; 
-my $yourRAST=$ARGV[1]; 
-my $yourspecial=$ARGV[2];
+use warnings;
+my ($yourquery,$yourRAST,$yourspecial) = @ARGV;
 
 print "corason.pl -q $yourquery -rast_ids $yourRAST -s $yourspecial\n";
 system "corason.pl -q $yourquery -rast_ids $yourRAST -s $yourspecial\n";

@@ -1,4 +1,4 @@
-#!/usr/bin/perl 
+#!/usr/bin/env perl 
 use lib '/usr/local/lib/perl5/site_perl/5.20.3';
 use Cwd qw(cwd);
 
@@ -45,10 +45,11 @@ while (my $seq_object = $seqio_obj->next_seq ){
             $accession= $seq_object->accession . "\n"; ##Getting accesion
             my $LOCUS= $seq_object->display_id;# . "\n"; ##Getting accesion
             #print" $LOCUS\n"; ##Getting accesion
+	    my $species;
 	    if ($seq_object->species){$species= $seq_object->species->binomial();};
 
 	    for my $feat_object ($seq_object->get_SeqFeatures) {
-		if($pecies ne "species"){
+		if($species ne "species"){
 			### geting org name 
  	      		if($feat_object->primary_tag eq "source"){
                    	for my $tag ($feat_object->get_all_tags) {

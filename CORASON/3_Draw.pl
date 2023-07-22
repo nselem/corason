@@ -1,4 +1,5 @@
-#!/usr/bin/perl -I/usr/local/lib/perl5/site_perl/5.20.3
+#!/usr/bin/env perl
+#-I/usr/local/lib/perl5/site_perl/5.20.3
 
 use SVG;
 use strict;

@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
 use warnings;
 use Getopt::Long;
@@ -15,15 +15,15 @@ my $BLAST2="Core$name.blast";
 
 
 GetOptions(
-        'help|?' => \my $help,
-        'verbose' => \my $verbose,
-        'dir_scripts=s' => \my $dir_scripts,
-        'e_core=f'=>\(my $e_core=.001) ,
-        'list=s'=>\my $lista ,
-	'num=i'=>\my $num,
-        'rast_ids=s' => \my $RAST_IDs2,
-	'outname=s'=>\my $outname,
-        );
+    'help|?'     => \my $help,
+    'verbose'    => \my $verbose,
+    'dir_scripts=s' => \my $dir_scripts,
+    'e_core=f'   => \(my $e_core= '.001'),
+    'list=s'     => \my $lista,
+    'num=i'      => \my $num,
+    'rast_ids=s' => \my $RAST_IDs2,
+    'outname=s'  => \my $outname,
+    );
 
 die "$0 requires the argument (-lista\n" unless $lista;
 die "$0 requires the argument (-outname\n" unless $outname;  ## Output directory
