@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/env perl
 use strict;
 use lib '/usr/local/lib/perl5/site_perl/5.20.3';
 use Bio::SeqFeature::Generic;

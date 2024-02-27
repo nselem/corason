@@ -1,4 +1,4 @@
-#!/bin/perl 
+#!/bin/env perl 
 ## I want to extract CDS entrys and ids from a geneBankFile
 ## coordinates from each CDS and direction
 ## this file input is an NCBI file, a name of the file and the proposed rastid and 
